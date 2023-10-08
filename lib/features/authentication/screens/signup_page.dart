@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ojembaa_mobile/utils/colors.dart';
-import 'package:ojembaa_mobile/utils/extensions.dart';
-import 'package:ojembaa_mobile/utils/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/colors.dart';
+import 'package:ojembaa_mobile/utils/components/extensions.dart';
+import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 
@@ -21,11 +21,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffFFFBF2),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xffFFFBF2),
-      ),
+      backgroundColor: AppColors.primary_light,
+      appBar: AppBar(elevation: 0, backgroundColor: AppColors.primary_light),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: context.width(.06)),
         child: Column(

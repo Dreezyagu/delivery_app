@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ojembaa_mobile/features/preliminary/screens/splash_page.dart';
-import 'package:ojembaa_mobile/utils/colors.dart';
+import 'package:ojembaa_mobile/utils/components/colors.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,10 +18,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ojembaa',
       theme: ThemeData(
-        fontFamily: "Inter",
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-        useMaterial3: true,
-      ),
+          fontFamily: "QanelasSoft",
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(
+            elevation: 0,
+            backgroundColor: AppColors.primary_light,
+            centerTitle: true,
+          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary)
+              .copyWith(background: AppColors.primary_light)),
       home: const SplashPage(),
     );
   }

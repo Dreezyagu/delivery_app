@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ojembaa_mobile/features/preliminary/widgets/welcome_widget.dart';
-import 'package:ojembaa_mobile/utils/colors.dart';
-import 'package:ojembaa_mobile/utils/extensions.dart';
-import 'package:ojembaa_mobile/utils/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/colors.dart';
+import 'package:ojembaa_mobile/utils/components/extensions.dart';
+import 'package:ojembaa_mobile/utils/components/image_util.dart';
+
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});

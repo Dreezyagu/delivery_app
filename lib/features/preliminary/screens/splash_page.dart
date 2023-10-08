@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ojembaa_mobile/features/preliminary/screens/welcome_page.dart';
-import 'package:ojembaa_mobile/utils/colors.dart';
-import 'package:ojembaa_mobile/utils/extensions.dart';
-import 'package:ojembaa_mobile/utils/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/colors.dart';
+import 'package:ojembaa_mobile/utils/components/extensions.dart';
+import 'package:ojembaa_mobile/utils/components/image_util.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ojembaa_mobile/features/authentication/screens/signup_page.dart';
-import 'package:ojembaa_mobile/utils/colors.dart';
-import 'package:ojembaa_mobile/utils/extensions.dart';
-import 'package:ojembaa_mobile/utils/image_util.dart';
+import 'package:ojembaa_mobile/features/homepage/screens/nav_page.dart';
+import 'package:ojembaa_mobile/utils/components/colors.dart';
+import 'package:ojembaa_mobile/utils/components/extensions.dart';
+import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 
@@ -88,7 +89,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
                 SizedBox(height: context.height(.01)),
                 CustomContinueButton2(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NavPage(),
+                        ));
+                  },
                   sidePadding: 0,
                   elevation: 0,
                   bgColor: AppColors.accent,

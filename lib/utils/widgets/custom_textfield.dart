@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ojembaa_mobile/utils/colors.dart';
-import 'package:ojembaa_mobile/utils/extensions.dart';
+import 'package:ojembaa_mobile/utils/components/colors.dart';
+import 'package:ojembaa_mobile/utils/components/extensions.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField(

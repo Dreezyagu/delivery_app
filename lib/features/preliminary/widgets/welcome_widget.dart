@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ojembaa_mobile/features/authentication/screens/login_page.dart';
-import 'package:ojembaa_mobile/utils/colors.dart';
-import 'package:ojembaa_mobile/utils/extensions.dart';
+import 'package:ojembaa_mobile/utils/components/colors.dart';
+import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 
 class WelcomeWidget extends StatelessWidget {
