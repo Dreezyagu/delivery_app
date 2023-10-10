@@ -1,4 +1,6 @@
 class ImageUtil {
+  ImageUtil._();
+
   static const email = "assets/icons/email.svg";
   static const big_icon = "assets/icons/big_icon.svg";
   static const delivery_box = "assets/icons/delivery_box.svg";
@@ -26,6 +28,9 @@ class ImageUtil {
   static const express_delivery = "assets/icons/express_delivery.svg";
   static const regular_delivery = "assets/icons/regular_delivery.svg";
   static const delivery_star = "assets/icons/delivery_star.svg";
+  static const delivery_star2 = "assets/icons/delivery_star2.svg";
+  static const delivery_confirmed = "assets/icons/delivery_confirmed.svg";
+
   static const nearby_courier = "assets/icons/nearby_courier.svg";
 
   static const icon_title = "assets/images/icon_title.svg";

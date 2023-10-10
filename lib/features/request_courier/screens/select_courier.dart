@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/request_courier/screens/package_summary.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/select_courier_widget.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
@@ -44,7 +45,15 @@ class _SelectCourierState extends ConsumerState<SelectCourier> {
               SizedBox(height: context.height(.015)),
               Column(
                 children: [1, 2, 3, 4]
-                    .map((e) => const SelectCourierWidget())
+                    .map((e) => SelectCourierWidget(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PackageSummary(),
+                                ));
+                          },
+                        ))
                     .toList(),
               ),
               SizedBox(height: context.height(.03)),
@@ -66,7 +75,15 @@ class _SelectCourierState extends ConsumerState<SelectCourier> {
               SizedBox(height: context.height(.015)),
               Column(
                 children: [1, 2, 3, 4]
-                    .map((e) => const SelectCourierWidget())
+                    .map((e) => SelectCourierWidget(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PackageSummary(),
+                                ));
+                          },
+                        ))
                     .toList(),
               ),
             ],

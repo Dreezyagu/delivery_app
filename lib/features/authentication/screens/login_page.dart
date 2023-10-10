@@ -93,6 +93,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
+                          settings: const RouteSettings(name: "/mainPage"),
                           builder: (context) => const NavPage(),
                         ));
                   },
