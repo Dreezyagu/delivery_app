@@ -30,6 +30,9 @@ class ImageUtil {
   static const delivery_star = "assets/icons/delivery_star.svg";
   static const delivery_star2 = "assets/icons/delivery_star2.svg";
   static const delivery_confirmed = "assets/icons/delivery_confirmed.svg";
+  static const fancy_notification = "assets/icons/fancy_notification.svg";
+  static const logout = "assets/icons/logout.svg";
+  static const delete = "assets/icons/delete.svg";
 
   static const nearby_courier = "assets/icons/nearby_courier.svg";
 
