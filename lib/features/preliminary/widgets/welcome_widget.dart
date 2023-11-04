@@ -36,7 +36,7 @@ class WelcomeWidget extends StatelessWidget {
                   fontSize: context.width(.04), fontWeight: FontWeight.w400),
             ),
             SizedBox(height: context.height(.03)),
-            CustomContinueButton2(
+            CustomContinueButton(
               onPressed: () {
                 Navigator.push(
                     context,

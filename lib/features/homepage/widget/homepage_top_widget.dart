@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/data_util/state_enum.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/white_pill.dart';
 
-class HomepageTopWidget extends StatelessWidget {
+class HomepageTopWidget extends StatefulWidget {
   const HomepageTopWidget({
     super.key,
   });
 
+  @override
+  State<HomepageTopWidget> createState() => _HomepageTopWidgetState();
+}
+
+class _HomepageTopWidgetState extends State<HomepageTopWidget> {
+  final signInProvider =
+      StateNotifierProvider<SignInProvider, StateEnum>((ref) {
+    return SignInProvider();
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -55,13 +67,14 @@ class HomepageTopWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: context.height(.025)),
-          Text(
-            "Hello Paschal",
-            style: TextStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: context.width(.07)),
-          ),
+          Consumer(
+              builder: (context, ref, child) => Text(
+                    "Hello ${ref.watch(signInProvider.notifier).userModel}",
+                    style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: context.width(.07)),
+                  )),
           SizedBox(height: context.height(.005)),
           WhitePill(
             height: context.height(.045),

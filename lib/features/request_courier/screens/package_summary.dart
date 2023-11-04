@@ -100,7 +100,7 @@ class _PackageSummaryState extends ConsumerState<PackageSummary> {
                 ),
               ),
               SizedBox(height: context.height(.015)),
-              CustomContinueButton2(
+              CustomContinueButton(
                 onPressed: () {
                   if (groupValue != null) {
                     Navigator.push(
@@ -120,4 +120,3 @@ class _PackageSummaryState extends ConsumerState<PackageSummary> {
     );
   }
 }
-

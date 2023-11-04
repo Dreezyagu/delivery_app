@@ -263,7 +263,7 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                 ],
               )),
               SizedBox(height: context.height(.03)),
-              CustomContinueButton2(
+              CustomContinueButton(
                 onPressed: () {
                   Navigator.push(
                       context,

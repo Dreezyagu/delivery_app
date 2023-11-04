@@ -216,7 +216,7 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
                 ),
               ),
               SizedBox(height: context.height(.01)),
-              CustomContinueButton2(
+              CustomContinueButton(
                 onPressed: () {
                   Navigator.push(
                       context,
