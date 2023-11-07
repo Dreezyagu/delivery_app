@@ -7,7 +7,6 @@ import 'package:ojembaa_mobile/features/homepage/screens/nav_page.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
-import 'package:ojembaa_mobile/utils/data_util/state_enum.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 import 'package:ojembaa_mobile/utils/widgets/snackbar.dart';
@@ -27,11 +26,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool obscure = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final signInProvider =
-      StateNotifierProvider<SignInProvider, StateEnum>((ref) {
-    return SignInProvider();
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +110,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       SizedBox(height: context.height(.01)),
                       Consumer(
                         builder: (context, ref, child) {
-                          final data = ref.watch(signInProvider);
+                          final watcher = ref.watch(signInProvider);
                           final reader = ref.read(signInProvider.notifier);
-
                           return CustomContinueButton(
                             onPressed: () {
                               if (_formKey.currentState?.validate() == true) {
@@ -141,7 +134,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     password: passwordController.text);
                               }
                             },
-                            isActive: data != StateEnum.loading,
+                            isActive: !watcher.isLoading,
                             sidePadding: 0,
                             elevation: 0,
                             bgColor: AppColors.accent,

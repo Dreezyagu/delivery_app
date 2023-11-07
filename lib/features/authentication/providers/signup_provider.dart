@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ojembaa_mobile/features/authentication/models/user_model.dart';
 import 'package:ojembaa_mobile/features/authentication/services/auth_services.dart';
-import 'package:ojembaa_mobile/utils/data_util/state_enum.dart';
+import 'package:ojembaa_mobile/utils/data_util/base_notifier.dart';
 
-class SignUpProvider extends StateNotifier<StateEnum> {
-  SignUpProvider() : super(StateEnum.initial);
+class SignUpProvider extends StateNotifier<BaseNotifier<UserModel>> {
+  SignUpProvider() : super(BaseNotifier());
 
   String? errorMessage;
   UserModel? userModel;
@@ -17,19 +17,17 @@ class SignUpProvider extends StateNotifier<StateEnum> {
       required String password,
       VoidCallback? onSuccess,
       Function(String)? onError}) async {
-    state = StateEnum.loading;
+    state = BaseNotifier.setLoading();
     final data = await AuthServices.signUp(name, phone, email, password);
-    if (data?.success is UserModel) {
-      userModel = data?.success;
-      state = StateEnum.success;
+    if (data.success is UserModel) {
+      state = BaseNotifier.setDone(data.success!);
       if (onSuccess != null) {
         onSuccess();
       }
     } else {
-      errorMessage = data?.error;
-      state = StateEnum.error;
+      state = BaseNotifier.setError(data.error ?? "An error ocurred");
       if (onError != null) {
-        onError(data?.error ?? "An error ocurred");
+        onError(data.error ?? "An error ocurred");
       }
     }
   }

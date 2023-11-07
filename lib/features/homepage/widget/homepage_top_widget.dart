@@ -5,7 +5,6 @@ import 'package:ojembaa_mobile/features/authentication/providers/signin_provider
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
-import 'package:ojembaa_mobile/utils/data_util/state_enum.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/white_pill.dart';
 
@@ -19,10 +18,6 @@ class HomepageTopWidget extends StatefulWidget {
 }
 
 class _HomepageTopWidgetState extends State<HomepageTopWidget> {
-  final signInProvider =
-      StateNotifierProvider<SignInProvider, StateEnum>((ref) {
-    return SignInProvider();
-  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,44 +63,49 @@ class _HomepageTopWidgetState extends State<HomepageTopWidget> {
           ),
           SizedBox(height: context.height(.025)),
           Consumer(
-              builder: (context, ref, child) => Text(
-                    "Hello ${ref.watch(signInProvider.notifier).userModel}",
-                    style: TextStyle(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: context.width(.07)),
+              builder: (context, ref, child) => Column(
+                    children: [
+                      Text(
+                        "Hello ${ref.watch(signInProvider).data?.firstName}",
+                        style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: context.width(.07)),
+                      ),
+                      SizedBox(height: context.height(.005)),
+                      WhitePill(
+                        height: context.height(.045),
+                        width: context.width(.5),
+                        child: Row(
+                          children: [
+                            Circle(
+                              width: context.width(.06),
+                              child: Icon(
+                                Icons.phone,
+                                size: context.width(.035),
+                                color: AppColors.white,
+                              ),
+                            ),
+                            Expanded(
+                                child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: context.width(.02)),
+                              child: Text(
+                                "${ref.watch(signInProvider).data?.phone}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: context.width(.045)),
+                              ),
+                            )),
+                            SvgPicture.asset(
+                              ImageUtil.squigly_check,
+                              height: context.width(.06),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
                   )),
-          SizedBox(height: context.height(.005)),
-          WhitePill(
-            height: context.height(.045),
-            width: context.width(.5),
-            child: Row(
-              children: [
-                Circle(
-                  width: context.width(.06),
-                  child: Icon(
-                    Icons.phone,
-                    size: context.width(.035),
-                    color: AppColors.white,
-                  ),
-                ),
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.width(.02)),
-                  child: Text(
-                    "0703 487 9388",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: context.width(.04)),
-                  ),
-                )),
-                SvgPicture.asset(
-                  ImageUtil.squigly_check,
-                  height: context.width(.06),
-                )
-              ],
-            ),
-          ),
         ],
       ),
     );

@@ -12,7 +12,7 @@ class AuthServices {
 
   static final HttpHelper dio = HttpHelper();
 
-  static Future<({UserModel? success, String? error})?> signUp(
+  static Future<({UserModel? success, String? error})> signUp(
     String name,
     String phone,
     String email,
@@ -34,14 +34,17 @@ class AuthServices {
         return (success: null, error: error.message ?? "An error occured");
       }
     } on DioException catch (e) {
-      final error = ErrorModel.fromMap(e.response?.data);
-      return (success: null, error: error.message ?? "An error occured");
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
     } catch (e) {
       return (success: null, error: "An error occured");
     }
   }
 
-  static Future<({Map<String, dynamic>? success, String? error})?> signIn(
+  static Future<({Map<String, dynamic>? success, String? error})> signIn(
     String email,
     String password,
   ) async {
@@ -59,14 +62,17 @@ class AuthServices {
         return (success: null, error: error.message ?? "An error occured");
       }
     } on DioException catch (e) {
-      final error = ErrorModel.fromMap(e.response?.data);
-      return (success: null, error: error.message ?? "An error occured");
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
     } catch (e) {
       return (success: null, error: "An error occured");
     }
   }
 
-  static Future<({UserModel? success, String? error})?> getDetails() async {
+  static Future<({UserModel? success, String? error})> getDetails() async {
     try {
       final response = await dio.get(
         "$baseUrl$getDetailsUrl",
@@ -80,8 +86,11 @@ class AuthServices {
         return (success: null, error: error.message ?? "An error occured");
       }
     } on DioException catch (e) {
-      final error = ErrorModel.fromMap(e.response?.data);
-      return (success: null, error: error.message ?? "An error occured");
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
     } catch (e) {
       return (success: null, error: "An error occured");
     }

@@ -16,7 +16,7 @@ class UserModel {
   final String? updatedAt;
 
   UserModel(
-      this.username,
+      {this.username,
       this.firstName,
       this.lastName,
       this.email,
@@ -27,7 +27,7 @@ class UserModel {
       this.id,
       this.status,
       this.createdAt,
-      this.updatedAt);
+      this.updatedAt});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -48,18 +48,18 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      map['username'] != null ? map['username'] as String : null,
-      map['firstName'] != null ? map['firstName'] as String : null,
-      map['lastName'] != null ? map['lastName'] as String : null,
-      map['email'] != null ? map['email'] as String : null,
-      map['phone'] != null ? map['phone'] as String : null,
-      map['role'] != null ? map['role'] as String : null,
-      map['address'] != null ? map['address'] as String : null,
-      map['fcmToken'] != null ? map['fcmToken'] as String : null,
-      map['id'] != null ? map['id'] as String : null,
-      map['status'] != null ? map['status'] as String : null,
-      map['createdAt'] != null ? map['createdAt'] as String : null,
-      map['updatedAt'] != null ? map['updatedAt'] as String : null,
+      username: map['username'] != null ? map['username'] as String : null,
+      firstName: map['firstName'] != null ? map['firstName'] as String : null,
+      lastName: map['lastName'] != null ? map['lastName'] as String : null,
+      email: map['email'] != null ? map['email'] as String : null,
+      phone: map['phone'] != null ? map['phone'] as String : null,
+      role: map['role'] != null ? map['role'] as String : null,
+      address: map['address'] != null ? map['address'] as String : null,
+      fcmToken: map['fcmToken'] != null ? map['fcmToken'] as String : null,
+      id: map['id'] != null ? map['id'] as String : null,
+      status: map['status'] != null ? map['status'] as String : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
     );
   }
 
