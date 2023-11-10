@@ -40,4 +40,5 @@ class ImageUtil {
   static const icon_title_accent = "assets/images/icon_title_accent.svg";
   static const man_with_box = "assets/images/man_with_box.png";
   static const test_image = "assets/images/test_image.png";
+  static const no_delivery = "assets/images/no_delivery.svg";
 }

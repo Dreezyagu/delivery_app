@@ -17,11 +17,8 @@ class ErrorModel {
   }
 
   factory ErrorModel.fromMap(Map<String, dynamic> map) {
-    return ErrorModel(
-      map['status'] != null ? map['status'] as int : null,
-      map['message'] != null ? map['message'] as String : null,
-      map['error_message'] != null ? map['error_message'] as String : null,
-    );
+    return ErrorModel(map['status'] != null ? map['status'] as int : null,
+        map['message']?.toString(), map['error_message']?.toString());
   }
 
   String toJson() => json.encode(toMap());

@@ -1,2 +1,2 @@
-run riverpod-generator:
-	dart run build_runner watch
+build:
+	flutter build apk -t lib/main.dart --split-per-abi

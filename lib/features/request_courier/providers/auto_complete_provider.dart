@@ -26,9 +26,15 @@ class AutoCompleteProvider
       }
     }
   }
+
+  void reset() {
+    state = BaseNotifier.setInitial();
+  }
 }
 
-final autoCompleteProvider = StateNotifierProvider<AutoCompleteProvider,
-    BaseNotifier<List<AutocompleteModel>>>((ref) {
+final autoCompleteProvider = StateNotifierProvider.family<
+    AutoCompleteProvider,
+    BaseNotifier<List<AutocompleteModel>>,
+    String>((ref, arg) {
   return AutoCompleteProvider();
 });

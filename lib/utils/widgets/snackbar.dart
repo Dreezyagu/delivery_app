@@ -20,7 +20,7 @@ class CustomSnackbar {
 
   static void showErrorSnackBar(BuildContext context,
       {required String message,
-      int milliseconds = 10000,
+      int milliseconds = 5000,
       SnackBarBehavior snackBarBehavior = SnackBarBehavior.floating}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

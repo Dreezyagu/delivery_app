@@ -20,6 +20,10 @@ class BaseNotifier<T> {
     return BaseNotifier(loadState: StateEnum.loading);
   }
 
+  static BaseNotifier<T> setInitial<T>() {
+    return BaseNotifier(loadState: StateEnum.initial);
+  }
+
   bool get isLoading => loadState == StateEnum.loading;
 
   Widget when({

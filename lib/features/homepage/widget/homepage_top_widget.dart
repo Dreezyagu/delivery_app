@@ -64,6 +64,7 @@ class _HomepageTopWidgetState extends State<HomepageTopWidget> {
           SizedBox(height: context.height(.025)),
           Consumer(
               builder: (context, ref, child) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Hello ${ref.watch(signInProvider).data?.firstName}",

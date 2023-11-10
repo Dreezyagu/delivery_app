@@ -86,7 +86,7 @@ class _CustomDropDownFormFieldState<T>
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
                   borderSide:
-                      const BorderSide(color: AppColors.primary, width: 1.5)),
+                      const BorderSide(color: AppColors.white, width: 1.5)),
               isDense: true,
               labelText: null,
               contentPadding: widget.padding ??
@@ -95,6 +95,7 @@ class _CustomDropDownFormFieldState<T>
                     vertical: context.width(.045),
                   ),
             ),
+            dropdownColor: AppColors.white,
             items: widget.items,
             onChanged: widget.onChanged,
           ),
