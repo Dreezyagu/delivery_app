@@ -35,7 +35,7 @@ class DeliveryConfirmed extends StatelessWidget {
                     fontSize: context.width(.045)),
               ),
               const Spacer(),
-              CustomContinueButton2(
+              CustomContinueButton(
                 onPressed: () {
                   Navigator.popUntil(context, ModalRoute.withName("/mainPage"));
                 },

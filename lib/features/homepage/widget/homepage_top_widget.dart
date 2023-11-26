@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/white_pill.dart';
 
-class HomepageTopWidget extends StatelessWidget {
+class HomepageTopWidget extends StatefulWidget {
   const HomepageTopWidget({
     super.key,
   });
 
+  @override
+  State<HomepageTopWidget> createState() => _HomepageTopWidgetState();
+}
+
+class _HomepageTopWidgetState extends State<HomepageTopWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -55,44 +62,51 @@ class HomepageTopWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: context.height(.025)),
-          Text(
-            "Hello Paschal",
-            style: TextStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: context.width(.07)),
-          ),
-          SizedBox(height: context.height(.005)),
-          WhitePill(
-            height: context.height(.045),
-            width: context.width(.5),
-            child: Row(
-              children: [
-                Circle(
-                  width: context.width(.06),
-                  child: Icon(
-                    Icons.phone,
-                    size: context.width(.035),
-                    color: AppColors.white,
-                  ),
-                ),
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.width(.02)),
-                  child: Text(
-                    "0703 487 9388",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: context.width(.04)),
-                  ),
-                )),
-                SvgPicture.asset(
-                  ImageUtil.squigly_check,
-                  height: context.width(.06),
-                )
-              ],
-            ),
-          ),
+          Consumer(
+              builder: (context, ref, child) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Hello ${ref.watch(signInProvider).data?.firstName}",
+                        style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: context.width(.07)),
+                      ),
+                      SizedBox(height: context.height(.005)),
+                      WhitePill(
+                        height: context.height(.045),
+                        width: context.width(.5),
+                        child: Row(
+                          children: [
+                            Circle(
+                              width: context.width(.06),
+                              child: Icon(
+                                Icons.phone,
+                                size: context.width(.035),
+                                color: AppColors.white,
+                              ),
+                            ),
+                            Expanded(
+                                child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: context.width(.02)),
+                              child: Text(
+                                "${ref.watch(signInProvider).data?.phone}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: context.width(.045)),
+                              ),
+                            )),
+                            SvgPicture.asset(
+                              ImageUtil.squigly_check,
+                              height: context.width(.06),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
         ],
       ),
     );
