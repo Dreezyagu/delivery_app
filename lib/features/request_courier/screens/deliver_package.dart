@@ -2,11 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/autocomplete_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/auto_complete_provider.dart';
+import 'package:ojembaa_mobile/features/request_courier/providers/package_provider.dart';
+import 'package:ojembaa_mobile/features/request_courier/providers/upload_asset_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/screens/select_courier.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/content_container.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/delivery_whitepill.dart';
@@ -14,11 +18,11 @@ import 'package:ojembaa_mobile/features/request_courier/widgets/image_picker_wid
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/number_formatter.dart';
 import 'package:ojembaa_mobile/utils/components/validators.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
-import 'package:ojembaa_mobile/utils/widgets/custom_dropdown.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 import 'package:ojembaa_mobile/utils/widgets/snackbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/white_pill.dart';
@@ -38,14 +42,25 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
   final TextEditingController dropOffLandmarkController =
       TextEditingController();
   final TextEditingController nameOfItem = TextEditingController();
+  final TextEditingController worthOfItem = TextEditingController();
+  final TextEditingController instructions = TextEditingController();
+  final TextEditingController recipientName = TextEditingController();
+  final TextEditingController recipientPhone = TextEditingController();
 
   File? _file;
 
   DeliveryType? deliveryType;
 
-  String? itemWorth;
+  Recipient? recipient;
+
+  String? imageUrl;
+
+  bool? checkedValue = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _recipientKey = GlobalKey<FormState>();
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   AutocompleteModel? pickUpLandmark;
   AutocompleteModel? dropOffLandmark;
@@ -53,6 +68,7 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: const CustomAppBar(
         title: Text(
           "Deliver a package",
@@ -341,174 +357,409 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                 )),
                 SizedBox(height: context.height(.02)),
                 ContentContainer(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Package details",
-                      style: TextStyle(fontSize: context.width(.04)),
-                    ),
-                    SizedBox(height: context.height(.01)),
-                    CustomTextFormField(
-                      controller: nameOfItem,
-                      borderColor: AppColors.white,
-                      validator: Validators.notEmpty(),
-                      keyboardType: TextInputType.name,
-                      hintText: "Name of item(s)",
-                      prefix: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: context.width(.015)),
-                        child: Circle(
-                          width: context.width(.0),
-                          color: AppColors.primary.withOpacity(.38),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SvgPicture.asset(
-                              ImageUtil.pickup,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Package details",
+                        style: TextStyle(fontSize: context.width(.04)),
+                      ),
+                      SizedBox(height: context.height(.01)),
+                      CustomTextFormField(
+                        controller: nameOfItem,
+                        borderColor: AppColors.white,
+                        validator: Validators.notEmpty(),
+                        keyboardType: TextInputType.name,
+                        hintText: "Name of item(s)",
+                        prefix: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: context.width(.015)),
+                          child: Circle(
+                            width: context.width(.0),
+                            color: AppColors.primary.withOpacity(.38),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SvgPicture.asset(
+                                ImageUtil.pickup,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: context.height(.015)),
-                    CustomDropDownFormField<String>(
-                      items: [
-                        "Less than 10,000",
-                        "11,000-100,000",
-                        "101,000-1M",
-                        "1M+"
-                      ]
-                          .map((e) => DropdownMenuItem<String>(
-                                value: e,
-                                child: Text(
-                                  e,
-                                  style: const TextStyle(
-                                      color: AppColors.black,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ))
-                          .toList(),
-                      value: itemWorth,
-                      hintText: "Worth of item(s)",
-                      onChanged: (String? value) {
-                        setState(() {
-                          itemWorth = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: context.height(.015)),
-                    InkWell(
-                      onTap: () {
-                        if (Platform.isIOS) {
-                          showCupertinoModalPopup(
-                              context: context,
-                              builder: (context) => ImagePickerWidget(
-                                    onImageSelected: (XFile val) {
-                                      setState(() {
-                                        _file = File(val.path);
-                                      });
-                                    },
-                                    onCanceled: () => Navigator.pop(context),
-                                  ));
-                        } else {
-                          showModalBottomSheet(
-                              context: context,
-                              builder: (context) => ImagePickerWidget(
-                                    onImageSelected: (XFile val) {
-                                      setState(() {
-                                        _file = File(val.path);
-                                      });
-                                    },
-                                    onCanceled: () => Navigator.pop(context),
-                                  ));
-                        }
-                      },
-                      child: WhitePill(
-                          width: double.infinity,
+                      SizedBox(height: context.height(.01)),
+                      CustomTextFormField(
+                        controller: worthOfItem,
+                        borderColor: AppColors.white,
+                        validator: Validators.notEmpty(),
+                        keyboardType: TextInputType.number,
+                        hintText: "Worth of item(s)",
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          CurrencyInputFormatter()
+                        ],
+                        prefix: Padding(
                           padding: EdgeInsets.symmetric(
-                                  vertical: context.height(.01),
-                                  horizontal: context.width(.02)) +
-                              EdgeInsets.only(left: context.width(.02)),
-                          child: Row(
-                            children: [
-                              _file != null
-                                  ? SizedBox(
-                                      height: context.width(.15),
-                                      // width: context.width(.2),
-                                      child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Image.file(_file!)),
-                                    )
-                                  : Circle(
-                                      width: context.width(.08),
-                                      color: AppColors.primary.withOpacity(.38),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: SvgPicture.asset(
-                                          ImageUtil.camera,
+                              vertical: context.width(.015)),
+                          child: Circle(
+                            width: context.width(.0),
+                            color: AppColors.primary.withOpacity(.38),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SvgPicture.asset(
+                                ImageUtil.pickup,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: context.height(.015)),
+                      Consumer(builder: (context, ref, child) {
+                        final data = ref.watch(uploadAssetProvider);
+                        final reader = ref.read(uploadAssetProvider.notifier);
+                        return InkWell(
+                          onTap: () {
+                            if (Platform.isIOS) {
+                              showCupertinoModalPopup(
+                                  context: context,
+                                  builder: (context) => ImagePickerWidget(
+                                        onImageSelected: (XFile val) {
+                                          _file = File(val.path);
+                                          if (_file != null) {
+                                            reader.uploadPicture(
+                                              file: _file!,
+                                              onSuccess: () {
+                                                imageUrl = data.data;
+                                                CustomSnackbar
+                                                    .showSuccessSnackBar(
+                                                        _scaffoldKey
+                                                            .currentContext!,
+                                                        message:
+                                                            "Upload successful");
+                                              },
+                                              onError: (p0) => CustomSnackbar
+                                                  .showErrorSnackBar(
+                                                      _scaffoldKey
+                                                          .currentContext!,
+                                                      message: p0),
+                                            );
+                                          }
+                                        },
+                                        onCanceled: () =>
+                                            Navigator.pop(context),
+                                      ));
+                            } else {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) => ImagePickerWidget(
+                                        onImageSelected: (XFile val) {
+                                          _file = File(val.path);
+                                          if (_file != null) {
+                                            reader.uploadPicture(
+                                              file: _file!,
+                                              onSuccess: () {
+                                                imageUrl = data.data;
+                                                CustomSnackbar
+                                                    .showSuccessSnackBar(
+                                                        _scaffoldKey
+                                                            .currentContext!,
+                                                        message:
+                                                            "Upload successful");
+                                              },
+                                              onError: (p0) => CustomSnackbar
+                                                  .showErrorSnackBar(
+                                                      _scaffoldKey
+                                                          .currentContext!,
+                                                      message: p0),
+                                            );
+                                          }
+                                        },
+                                        onCanceled: () =>
+                                            Navigator.pop(context),
+                                      ));
+                            }
+                          },
+                          child: WhitePill(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(
+                                      vertical: context.height(.01),
+                                      horizontal: context.width(.02)) +
+                                  EdgeInsets.only(left: context.width(.02)),
+                              child: Row(
+                                children: [
+                                  _file != null
+                                      ? SizedBox(
+                                          height: context.width(.15),
+                                          // width: context.width(.2),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.file(_file!)),
+                                        )
+                                      : Circle(
+                                          width: context.width(.08),
+                                          color: AppColors.primary
+                                              .withOpacity(.38),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: SvgPicture.asset(
+                                              ImageUtil.camera,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                  SizedBox(width: context.width(.02)),
+                                  Expanded(
+                                    child: Text(
+                                      "Take a picture of your item(s)",
+                                      style: TextStyle(
+                                          fontSize: context.width(.035),
+                                          color: AppColors.hintColor),
                                     ),
-                              SizedBox(width: context.width(.02)),
-                              Expanded(
-                                child: Text(
-                                  "Take a picture of your item(s)",
-                                  style: TextStyle(
-                                      fontSize: context.width(.035),
-                                      color: AppColors.hintColor),
+                                  ),
+                                  WhitePill(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: context.width(.04),
+                                        vertical: context.height(.01)),
+                                    color: AppColors.primary,
+                                    child: data.isLoading
+                                        ? SizedBox(
+                                            height: context.width(.06),
+                                            width: context.width(.06),
+                                            child:
+                                                const CircularProgressIndicator(
+                                              color: AppColors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            _file != null ? "Retake" : "Take",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: context.width(.037)),
+                                          ),
+                                  )
+                                ],
+                              )),
+                        );
+                      }),
+                      SizedBox(height: context.height(.02)),
+                      CustomTextFormField(
+                        controller: instructions,
+                        borderRadius: 15,
+                        borderColor: AppColors.white,
+                        keyboardType: TextInputType.name,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.width(.03),
+                          vertical: context.width(.035),
+                        ),
+                        maxLines: 4,
+                        hintText:
+                            "Specific Instruction to the courier (Optional)",
+                      ),
+                      SizedBox(height: context.width(.02)),
+                      Row(children: [
+                        Checkbox(
+                            value: checkedValue,
+                            checkColor: AppColors.white,
+                            activeColor: AppColors.primary,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                checkedValue = value;
+                              });
+                            }),
+                        Text(
+                          "Fragile Item ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.accent,
+                            fontSize: context.width(.035),
+                          ),
+                        ),
+                      ])
+                    ],
+                  ),
+                ),
+                SizedBox(height: context.height(.02)),
+                ContentContainer(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Recipients",
+                      style: TextStyle(fontSize: context.width(.04)),
+                    ),
+                    SizedBox(height: context.height(.015)),
+                    Row(
+                      children: [
+                        DeliveryWhitepill(
+                          title: "Me          ",
+                          fontSize: context.width(.035),
+                          selected: recipient == Recipient.me,
+                          onTap: () {
+                            setState(() {
+                              recipient = Recipient.me;
+                            });
+                          },
+                          icon: ImageUtil.profile,
+                        ),
+                        SizedBox(width: context.width(.05)),
+                        DeliveryWhitepill(
+                          title: "Third party",
+                          fontSize: context.width(.035),
+                          selected: recipient == Recipient.thirdParty,
+                          onTap: () {
+                            setState(() {
+                              recipient = Recipient.thirdParty;
+                            });
+                          },
+                          icon: ImageUtil.person,
+                        ),
+                      ],
+                    ),
+                    if (recipient == Recipient.thirdParty)
+                      Form(
+                        key: _recipientKey,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: context.height(.02)),
+                              child: const Divider(),
+                            ),
+                            CustomTextFormField(
+                              controller: recipientName,
+                              borderColor: AppColors.white,
+                              hintText: "Enter Recipient name",
+                              validator: Validators.notEmpty(),
+                              keyboardType: TextInputType.name,
+                              prefix: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: context.width(.015)),
+                                child: Circle(
+                                  width: 0,
+                                  color: AppColors.primary.withOpacity(.38),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SvgPicture.asset(
+                                      ImageUtil.person,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              WhitePill(
+                            ),
+                            SizedBox(height: context.height(.02)),
+                            CustomTextFormField(
+                              controller: recipientPhone,
+                              borderColor: AppColors.white,
+                              hintText: "Enter Recipient phone number",
+                              validator: Validators.notEmpty(),
+                              keyboardType: TextInputType.phone,
+                              prefix: Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: context.width(.04),
-                                    vertical: context.height(.01)),
-                                color: AppColors.primary,
-                                child: Text(
-                                  _file != null ? "Retake" : "Take",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: context.width(.037)),
+                                    vertical: context.width(.015)),
+                                child: Circle(
+                                  width: 0,
+                                  color: AppColors.primary.withOpacity(.38),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SvgPicture.asset(
+                                      ImageUtil.phone_number,
+                                    ),
+                                  ),
                                 ),
-                              )
-                            ],
-                          )),
-                    )
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                   ],
                 )),
                 SizedBox(height: context.height(.03)),
-                CustomContinueButton(
-                  onPressed: () {
-                    if (deliveryType == null) {
-                      CustomSnackbar.showErrorSnackBar(context,
-                          message: "Pleas select a delivery type");
-                      return;
-                    }
-                    if (pickUpLandmark == null || dropOffLandmark == null) {
-                      CustomSnackbar.showErrorSnackBar(context,
-                          message: "Pleas select a verifiable landmark");
-                      return;
-                    }
-                    if (itemWorth == null) {
-                      CustomSnackbar.showErrorSnackBar(context,
-                          message: "Pleas select the item(s) worth");
-                      return;
-                    }
-                    if (_file == null) {
-                      CustomSnackbar.showErrorSnackBar(context,
-                          message: "Pleas upload a picture of item(s)");
-                      return;
-                    }
-                    if (_formKey.currentState?.validate() == true) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SelectCourier(),
-                          ));
-                    }
-                  },
-                  sidePadding: 0,
-                ),
+                Consumer(builder: (context, ref, child) {
+                  final data = ref.watch(packageProvider);
+                  final reader = ref.read(packageProvider.notifier);
+                  final profileData = ref.watch(signInProvider).data;
+
+                  return CustomContinueButton(
+                    isActive: !data.isLoading,
+                    onPressed: () {
+                      if (deliveryType == null) {
+                        CustomSnackbar.showErrorSnackBar(context,
+                            message: "Please select a delivery type");
+                        return;
+                      }
+                      if (pickUpLandmark == null || dropOffLandmark == null) {
+                        CustomSnackbar.showErrorSnackBar(context,
+                            message: "Please select a verifiable landmark");
+                        return;
+                      }
+                      if (_file == null) {
+                        CustomSnackbar.showErrorSnackBar(context,
+                            message: "Please upload a picture of item(s)");
+                        return;
+                      }
+                      if (imageUrl == null) {
+                        CustomSnackbar.showErrorSnackBar(context,
+                            message:
+                                "Your image upload was unsuccessful, please try again.");
+                        return;
+                      }
+
+                      if (_formKey.currentState?.validate() == true) {
+                        if (recipient == Recipient.thirdParty) {
+                          if (_recipientKey.currentState?.validate() == true) {
+                            reader.createPackage(
+                              payload: {
+                                "name": nameOfItem.text.trim(),
+                                "instructions": instructions.text.trim(),
+                                "receiverName": recipientName.text.trim(),
+                                "receiverPhone": recipientPhone.text.trim(),
+                                "photoUrls": [imageUrl],
+                                "minPrice": worthOfItem.text.trim(),
+                                "maxPrice": worthOfItem.text.trim(),
+                              },
+                              onSuccess: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SelectCourier(),
+                                    ));
+                              },
+                              onError: (p0) {
+                                CustomSnackbar.showErrorSnackBar(context,
+                                    message: p0);
+                              },
+                            );
+                          }
+                          return;
+                        }
+                        reader.createPackage(
+                          payload: {
+                            "name": nameOfItem.text.trim(),
+                            "instructions": instructions.text.trim(),
+                            "receiverName":
+                                "${profileData?.firstName} ${profileData?.lastName}",
+                            "receiverPhone": "${profileData?.phone}",
+                            "photoUrls": [imageUrl],
+                            "minPrice": worthOfItem.text.trim(),
+                            "maxPrice": worthOfItem.text.trim(),
+                          },
+                          onSuccess: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SelectCourier(),
+                                ));
+                          },
+                          onError: (p0) {
+                            CustomSnackbar.showErrorSnackBar(context,
+                                message: p0);
+                          },
+                        );
+                      }
+                    },
+                    sidePadding: 0,
+                  );
+                }),
                 SizedBox(height: context.height(.03)),
               ],
             ),

@@ -32,3 +32,8 @@ class SignUpProvider extends StateNotifier<BaseNotifier<UserModel>> {
     }
   }
 }
+
+final signUpProvider =
+    StateNotifierProvider<SignUpProvider, BaseNotifier>((ref) {
+  return SignUpProvider();
+});

@@ -69,7 +69,44 @@ class ProfilePage extends ConsumerWidget {
                 icon: ImageUtil.fancy_notification,
               ),
               ProfileItemsWidget(
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: AppColors.white,
+                      title: Text(
+                        "Log out",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: context.width(.045)),
+                      ),
+                      content: Text(
+                        "Are you sure you want to log out?",
+                        style: TextStyle(fontSize: context.width(.04)),
+                      ),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "No",
+                              style: TextStyle(fontSize: context.width(.038)),
+                            )),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.popUntil(
+                                  context, ModalRoute.withName("/loginPage"));
+                            },
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(fontSize: context.width(.038)),
+                            )),
+                      ],
+                    ),
+                  );
+                },
                 title: "Log out",
                 icon: ImageUtil.logout,
               ),

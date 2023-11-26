@@ -4,6 +4,8 @@ import 'package:ojembaa_mobile/utils/components/extensions.dart';
 
 enum DeliveryType { light, medium, heavy }
 
+enum Recipient { me, thirdParty }
+
 class ContentContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsets? padding;

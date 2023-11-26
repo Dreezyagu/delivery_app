@@ -38,7 +38,8 @@ class CustomTextFormField extends StatelessWidget {
       this.margin,
       this.labelWeight,
       this.labelSize,
-      this.labelColor})
+      this.labelColor,
+      this.borderRadius})
       : super(key: key);
 
   final String? label;
@@ -64,15 +65,14 @@ class CustomTextFormField extends StatelessWidget {
   final List<String>? autofillHints;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
-  final Color? borderColor;
-  final Color? fillColor;
+  final Color? borderColor, fillColor;
   final bool? enabled;
   final String? counterText;
   final TextCapitalization textCapitalization;
   final TextStyle? style;
   final Color? labelColor;
   final FontWeight? labelWeight;
-  final double? labelSize;
+  final double? labelSize, borderRadius;
   final TextEditingController controller;
 
   @override
@@ -137,15 +137,15 @@ class CustomTextFormField extends StatelessWidget {
                     vertical: context.width(.045),
                   ),
               enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(borderRadius ?? 50),
                   borderSide: BorderSide(
                       color: borderColor ?? Colors.black38, width: .5)),
               focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(borderRadius ?? 50),
                   borderSide: BorderSide(
                       color: borderColor ?? Colors.black38, width: .5)),
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(borderRadius ?? 50),
                   borderSide: BorderSide(
                       width: .5, color: borderColor ?? Colors.black38)),
               floatingLabelBehavior: FloatingLabelBehavior.never,

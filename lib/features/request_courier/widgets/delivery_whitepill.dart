@@ -13,6 +13,7 @@ class DeliveryWhitepill extends StatelessWidget {
     required this.onTap,
     this.padding,
     required this.selected,
+    this.fontSize,
   });
 
   final String icon;
@@ -20,6 +21,7 @@ class DeliveryWhitepill extends StatelessWidget {
   final VoidCallback onTap;
   final EdgeInsets? padding;
   final bool selected;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,7 @@ class DeliveryWhitepill extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                      fontSize: context.width(.03),
+                      fontSize: fontSize ?? context.width(.03),
                       fontWeight: FontWeight.w500),
                 ),
               )

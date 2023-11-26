@@ -7,7 +7,6 @@ import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/components/validators.dart';
-import 'package:ojembaa_mobile/utils/data_util/base_notifier.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 import 'package:ojembaa_mobile/utils/widgets/snackbar.dart';
@@ -33,10 +32,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   String password = "";
 
-  final signUpProvider =
-      StateNotifierProvider<SignUpProvider, BaseNotifier>((ref) {
-    return SignUpProvider();
-  });
+
 
   @override
   Widget build(BuildContext context) {

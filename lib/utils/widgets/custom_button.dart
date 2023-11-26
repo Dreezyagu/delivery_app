@@ -46,6 +46,7 @@ class CustomContinueButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: bgColor,
             elevation: elevation,
+            disabledBackgroundColor: AppColors.white_background,
             shape: RoundedRectangleBorder(
                 side: enabled
                     ? isActive
