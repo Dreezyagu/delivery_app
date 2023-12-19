@@ -32,8 +32,6 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   String password = "";
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,7 +97,10 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                   controller: phoneController,
                   validator: Validators.multipleAnd(
                       [Validators.notEmpty(), Validators.minLength(11)]),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11)
+                  ],
                   keyboardType: TextInputType.phone,
                   hintText: "Phone number",
                   prefix: Container(

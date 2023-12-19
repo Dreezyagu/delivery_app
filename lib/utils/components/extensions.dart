@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 extension CustomContext on BuildContext {
@@ -15,4 +17,9 @@ extension CustomContext on BuildContext {
           : MediaQuery.of(this).size.width * percent;
     }
   }
+}
+
+extension TruncateDoubles on num {
+  double truncateToDecimalPlaces(int fractionalDigits) =>
+      (this * pow(10, fractionalDigits)).truncate() / pow(10, fractionalDigits);
 }

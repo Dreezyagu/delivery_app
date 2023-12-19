@@ -20,9 +20,9 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController emailController =
-      TextEditingController(text: "ifeanyi@mailinator.com");
+      TextEditingController(text: "aaifeanyi17@gmail.com");
   final TextEditingController passwordController =
-      TextEditingController(text: "Password123");
+      TextEditingController(text: "Password@123");
   bool obscure = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

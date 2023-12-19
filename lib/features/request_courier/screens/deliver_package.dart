@@ -19,6 +19,7 @@ import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/components/number_formatter.dart';
+import 'package:ojembaa_mobile/utils/components/utility.dart';
 import 'package:ojembaa_mobile/utils/components/validators.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
@@ -426,22 +427,26 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                           _file = File(val.path);
                                           if (_file != null) {
                                             reader.uploadPicture(
-                                              file: _file!,
-                                              onSuccess: () {
-                                                imageUrl = data.data;
-                                                CustomSnackbar
-                                                    .showSuccessSnackBar(
-                                                        _scaffoldKey
-                                                            .currentContext!,
-                                                        message:
-                                                            "Upload successful");
-                                              },
-                                              onError: (p0) => CustomSnackbar
-                                                  .showErrorSnackBar(
-                                                      _scaffoldKey
-                                                          .currentContext!,
-                                                      message: p0),
-                                            );
+                                                file: _file!,
+                                                onSuccess: (String url) {
+                                                  setState(() {
+                                                    imageUrl = url;
+                                                  });
+                                                  CustomSnackbar
+                                                      .showSuccessSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message:
+                                                              "Upload successful");
+                                                },
+                                                onError: (p0) {
+                                                  _file = null;
+                                                  CustomSnackbar
+                                                      .showErrorSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message: p0);
+                                                });
                                           }
                                         },
                                         onCanceled: () =>
@@ -455,22 +460,26 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                           _file = File(val.path);
                                           if (_file != null) {
                                             reader.uploadPicture(
-                                              file: _file!,
-                                              onSuccess: () {
-                                                imageUrl = data.data;
-                                                CustomSnackbar
-                                                    .showSuccessSnackBar(
-                                                        _scaffoldKey
-                                                            .currentContext!,
-                                                        message:
-                                                            "Upload successful");
-                                              },
-                                              onError: (p0) => CustomSnackbar
-                                                  .showErrorSnackBar(
-                                                      _scaffoldKey
-                                                          .currentContext!,
-                                                      message: p0),
-                                            );
+                                                file: _file!,
+                                                onSuccess: (String url) {
+                                                  setState(() {
+                                                    imageUrl = url;
+                                                  });
+                                                  CustomSnackbar
+                                                      .showSuccessSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message:
+                                                              "Upload successful");
+                                                },
+                                                onError: (p0) {
+                                                  _file = null;
+                                                  CustomSnackbar
+                                                      .showErrorSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message: p0);
+                                                });
                                           }
                                         },
                                         onCanceled: () =>
@@ -713,16 +722,38 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                 "receiverName": recipientName.text.trim(),
                                 "receiverPhone": recipientPhone.text.trim(),
                                 "photoUrls": [imageUrl],
-                                "minPrice": worthOfItem.text.trim(),
-                                "maxPrice": worthOfItem.text.trim(),
+                                "worth": Utility.convertToRealNumber(
+                                    worthOfItem.text.trim()),
+                                "fragile": checkedValue,
+                                "weight": deliveryType?.name.toUpperCase(),
                               },
-                              onSuccess: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SelectCourier(),
-                                    ));
+                              onSuccess: (String packageID) {
+                                reader.createDelivery(
+                                  payload: {
+                                    "pickupAddress": pickUpAddress.text.trim(),
+                                    "deliveryAddress":
+                                        dropOffAddress.text.trim(),
+                                    "packageId": packageID,
+                                    "pickupLandmark":
+                                        pickUpLandmarkController.text.trim(),
+                                    "deliveryLandmark":
+                                        dropOffLandmarkController.text.trim()
+                                  },
+                                  pickupId: pickUpLandmark!.placeId!,
+                                  dropoffId: dropOffLandmark!.placeId!,
+                                  onSuccess: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SelectCourier(),
+                                        ));
+                                  },
+                                  onError: (p0) {
+                                    CustomSnackbar.showErrorSnackBar(context,
+                                        message: p0);
+                                  },
+                                );
                               },
                               onError: (p0) {
                                 CustomSnackbar.showErrorSnackBar(context,
@@ -740,15 +771,37 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                 "${profileData?.firstName} ${profileData?.lastName}",
                             "receiverPhone": "${profileData?.phone}",
                             "photoUrls": [imageUrl],
-                            "minPrice": worthOfItem.text.trim(),
-                            "maxPrice": worthOfItem.text.trim(),
+                            "worth": Utility.convertToRealNumber(
+                                worthOfItem.text.trim()),
+                            "fragile": checkedValue,
+                            "weight": deliveryType?.name.toUpperCase(),
                           },
-                          onSuccess: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SelectCourier(),
-                                ));
+                          onSuccess: (String packageID) {
+                            reader.createDelivery(
+                              payload: {
+                                "pickupAddress": pickUpAddress.text.trim(),
+                                "deliveryAddress": dropOffAddress.text.trim(),
+                                "pickupLandmark":
+                                    pickUpLandmarkController.text.trim(),
+                                "deliveryLandmark":
+                                    dropOffLandmarkController.text.trim(),
+                                "packageId": packageID
+                              },
+                              pickupId: pickUpLandmark!.placeId!,
+                              dropoffId: dropOffLandmark!.placeId!,
+                              onSuccess: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SelectCourier(),
+                                    ));
+                              },
+                              onError: (p0) {
+                                CustomSnackbar.showErrorSnackBar(context,
+                                    message: p0);
+                              },
+                            );
                           },
                           onError: (p0) {
                             CustomSnackbar.showErrorSnackBar(context,
