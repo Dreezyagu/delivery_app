@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/autocomplete_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/couriers_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/pricing_model.dart';
 import 'package:ojembaa_mobile/utils/components/urls.dart';
 import 'package:ojembaa_mobile/utils/data_util/error_model.dart';
 import 'package:ojembaa_mobile/utils/helpers/http/http_helper.dart';
@@ -92,7 +94,6 @@ class RequestServices {
           await dio.post("$baseUrl$createPackageUrl", data: payload);
 
       if (response.data["status"] == "success") {
-        // final data = UserModel.fromMap(response.data["data"]);
         return (success: response.data["data"]["id"] as String, error: null);
       } else {
         final error = ErrorModel.fromMap(response.data);
@@ -147,8 +148,107 @@ class RequestServices {
           await dio.post("$baseUrl$createDeliveryUrl", data: payload);
 
       if (response.data["status"] == "success") {
-        // final data = UserModel.fromMap(response.data["data"]);
-        return (success: response.data["status"] as String, error: null);
+        return (success: response.data["data"] as String, error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
+
+  static Future<({List<CouriersModel>? success, String? error})> findCouriers(
+      String deliveryId, int radius) async {
+    try {
+      final response = await dio
+          .get("${baseUrl}deliveries/$deliveryId/find-couriers?radius=3");
+
+      if (response.data["status"] == "success") {
+        final data = (response.data["data"] as List)
+            .map(
+              (e) => CouriersModel.fromMap(e),
+            )
+            .toList();
+        return (success: data, error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
+
+  static Future<({String? success, String? error})> pickCourier(
+      String deliveryId, String courierId) async {
+    try {
+      final response = await dio.post(
+          "${baseUrl}deliveries/$deliveryId/pick-courier",
+          data: {"courierId": courierId});
+
+      if (response.data["status"] == "success") {
+        return (success: response.data["status"].toString(), error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
+
+  static Future<({String? success, String? error})> setDeliverySpeed(
+      String deliveryId, String mode) async {
+    try {
+      final response = await dio.patch(
+          "${baseUrl}deliveries/$deliveryId/set-mode",
+          body: {"mode": mode});
+
+      if (response.data["status"] == "success") {
+        return (success: response.data["status"].toString(), error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
+
+  static Future<({PricingModel? success, String? error})> getPricing(
+      String deliveryId) async {
+    try {
+      final response =
+          await dio.get("${baseUrl}deliveries/$deliveryId/pricing-summary");
+
+      if (response.data["status"] == "success") {
+        final data = PricingModel.fromMap(response.data["data"]);
+        return (success: data, error: null);
       } else {
         final error = ErrorModel.fromMap(response.data);
         return (success: null, error: error.message ?? "An error occured");

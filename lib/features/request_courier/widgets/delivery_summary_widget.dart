@@ -1,14 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/package_info_model.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 
 class DeliverySummaryWidget extends StatelessWidget {
+  final PackageInfoModel packageInfoModel;
+
   const DeliverySummaryWidget({
     super.key,
     this.extraWidget = const SizedBox.shrink(),
+    required this.packageInfoModel,
   });
 
   final Widget extraWidget;
@@ -28,9 +33,15 @@ class DeliverySummaryWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Image.asset(
-                ImageUtil.test_image,
-                height: context.height(.08),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox(
+                    height: context.width(.15),
+                    width: context.width(.15),
+                    child: CachedNetworkImage(
+                      imageUrl: packageInfoModel.photoUrl ?? "",
+                      fit: BoxFit.fill,
+                    )),
               ),
               SizedBox(
                 width: context.width(.04),
@@ -40,7 +51,7 @@ class DeliverySummaryWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Electronic Wall Clock",
+                      packageInfoModel.name ?? "",
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: context.width(.045)),
@@ -56,7 +67,7 @@ class DeliverySummaryWidget extends StatelessWidget {
                               child: SvgPicture.asset(ImageUtil.bike),
                             )),
                         Text(
-                          "  Light delivery",
+                          "  ${packageInfoModel.weight?.capitalize()} delivery",
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               fontSize: context.width(.033)),
@@ -85,7 +96,7 @@ class DeliverySummaryWidget extends StatelessWidget {
               ),
               SizedBox(width: context.width(.02)),
               Text(
-                "Wuse 2, opp. Atiku house, Abuja.",
+                packageInfoModel.pickupAddress ?? "",
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: AppColors.accent,
@@ -112,7 +123,7 @@ class DeliverySummaryWidget extends StatelessWidget {
               ),
               SizedBox(width: context.width(.02)),
               Text(
-                "Maitama NNPC quarters, Abuja. ",
+                packageInfoModel.deliveryAddress ?? "",
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: AppColors.accent,

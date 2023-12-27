@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ojembaa_mobile/features/orders/screens/order_details.dart';
 import 'package:ojembaa_mobile/features/orders/widgets/orders_list_widget.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 
 class OrdersPage extends ConsumerWidget {
+
   const OrdersPage({super.key});
 
   @override
@@ -28,11 +28,11 @@ class OrdersPage extends ConsumerWidget {
                 physics: const ScrollPhysics(),
                 itemBuilder: (context, index) => InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const OrderDetails(),
-                          ));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const OrderDetails(),
+                      //     ));
                     },
                     child: const OrdersListWidget()),
               ),

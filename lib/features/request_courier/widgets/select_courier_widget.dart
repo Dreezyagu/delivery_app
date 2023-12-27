@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/couriers_model.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
@@ -9,6 +11,7 @@ class SelectCourierWidget extends StatelessWidget {
   final Color? color, titleColor;
   final Widget? trailing, subtitle;
   final VoidCallback? onTap;
+  final CouriersModel? courier;
 
   const SelectCourierWidget(
       {super.key,
@@ -16,7 +19,8 @@ class SelectCourierWidget extends StatelessWidget {
       this.trailing,
       this.subtitle,
       required this.onTap,
-      this.titleColor});
+      this.titleColor,
+      required this.courier});
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +32,16 @@ class SelectCourierWidget extends StatelessWidget {
         onTap: onTap,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(50),
-          child: Image.asset(ImageUtil.test_image),
+          child: SizedBox(
+              height: context.width(.15),
+              width: context.width(.15),
+              child: CachedNetworkImage(
+                imageUrl: courier!.user_profilePhoto!,
+                fit: BoxFit.fill,
+              )),
         ),
         title: Text(
-          "Ikenna Okwara",
+          "${courier?.user_firstName ?? ""} ${courier?.user_lastName}",
           style: TextStyle(
               color: titleColor,
               fontWeight: FontWeight.w700,
@@ -42,7 +52,7 @@ class SelectCourierWidget extends StatelessWidget {
               children: [
                 SvgPicture.asset(ImageUtil.delivery_star),
                 Text(
-                  " 4/5",
+                  " 4.5",
                   style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: context.width(.035)),
@@ -57,7 +67,7 @@ class SelectCourierWidget extends StatelessWidget {
             ),
         trailing: trailing ??
             Text(
-              " 4/5",
+              "${double.parse(courier!.distance!).toStringAsFixed(1)}km",
               style: TextStyle(
                   fontWeight: FontWeight.w400, fontSize: context.width(.038)),
             ),

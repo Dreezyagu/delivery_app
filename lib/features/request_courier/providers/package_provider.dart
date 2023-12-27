@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/autocomplete_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/services/request_services.dart';
@@ -31,7 +30,7 @@ class PackageProvider extends StateNotifier<BaseNotifier<String>> {
       {required Map<String, dynamic> payload,
       required String pickupId,
       required String dropoffId,
-      VoidCallback? onSuccess,
+      Function(String)? onSuccess,
       Function(String)? onError}) async {
     state = BaseNotifier.setLoading();
     final pickUpData = await RequestServices.placesDetails(pickupId);
@@ -55,7 +54,7 @@ class PackageProvider extends StateNotifier<BaseNotifier<String>> {
       if (data.success is String) {
         state = BaseNotifier.setDone(data.success!);
         if (onSuccess != null) {
-          onSuccess();
+          onSuccess(data.success!);
         }
       } else {
         state = BaseNotifier.setError(data.error ?? "An error ocurred");

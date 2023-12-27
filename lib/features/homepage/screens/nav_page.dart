@@ -20,7 +20,9 @@ class _NavPageState extends State<NavPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-          WillPopScope(onWillPop: () => Future.value(false), child: getBody()),
+          PopScope(  
+            canPop: false,
+           child: getBody()),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         backgroundColor: const Color(0xffFEE1A7),

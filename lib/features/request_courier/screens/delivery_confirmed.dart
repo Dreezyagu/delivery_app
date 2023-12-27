@@ -11,8 +11,8 @@ class DeliveryConfirmed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () => Future.value(false),
+      body: PopScope(
+        canPop: false,
         child: Center(
           child: Column(
             children: [

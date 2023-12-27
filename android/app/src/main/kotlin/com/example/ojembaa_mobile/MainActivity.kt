@@ -1,4 +1,4 @@
-package com.example.ojembaa_mobile
+package com.ojembaa.customer
 
 import io.flutter.embedding.android.FlutterActivity
 

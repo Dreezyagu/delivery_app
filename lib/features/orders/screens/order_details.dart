@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/package_info_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/delivery_summary_widget.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/select_courier_widget.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
@@ -11,7 +12,9 @@ import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/white_pill.dart';
 
 class OrderDetails extends ConsumerWidget {
-  const OrderDetails({super.key});
+  final PackageInfoModel packageInfoModel;
+
+  const OrderDetails(this.packageInfoModel, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,6 +31,7 @@ class OrderDetails extends ConsumerWidget {
         child: Column(
           children: [
             DeliverySummaryWidget(
+              packageInfoModel: packageInfoModel,
               extraWidget: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -180,6 +184,7 @@ class OrderDetails extends ConsumerWidget {
             SizedBox(height: context.height(.01)),
             SelectCourierWidget(
               onTap: null,
+              courier: null,
               color: AppColors.accent,
               titleColor: AppColors.white,
               subtitle: Row(

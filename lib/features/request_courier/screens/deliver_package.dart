@@ -8,7 +8,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/autocomplete_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/package_info_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/auto_complete_provider.dart';
+import 'package:ojembaa_mobile/features/request_courier/providers/find_couriers_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/package_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/upload_asset_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/screens/select_courier.dart';
@@ -227,6 +229,19 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),
                               keyboardType: TextInputType.name,
+                              suffix: pickUpLandmarkController.text.isEmpty
+                                  ? null
+                                  : IconButton(
+                                      onPressed: () {
+                                        pickUpLandmark = null;
+                                        pickUpLandmarkController.clear();
+                                        reader.reset();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(
+                                        Icons.cancel,
+                                        color: AppColors.hintColor,
+                                      )),
                               prefix: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical: context.width(.015)),
@@ -335,6 +350,19 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),
                               keyboardType: TextInputType.name,
+                              suffix: dropOffLandmarkController.text.isEmpty
+                                  ? null
+                                  : IconButton(
+                                      onPressed: () {
+                                        dropOffLandmark = null;
+                                        dropOffLandmarkController.clear();
+                                        reader.reset();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(
+                                        Icons.cancel,
+                                        color: AppColors.hintColor,
+                                      )),
                               prefix: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical: context.width(.015)),
@@ -495,7 +523,7 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                   EdgeInsets.only(left: context.width(.02)),
                               child: Row(
                                 children: [
-                                  _file != null
+                                  imageUrl != null
                                       ? SizedBox(
                                           height: context.width(.15),
                                           // width: context.width(.2),
@@ -705,6 +733,11 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                             message: "Please upload a picture of item(s)");
                         return;
                       }
+                      if (recipient == null) {
+                        CustomSnackbar.showErrorSnackBar(context,
+                            message: "Please select a recipient");
+                        return;
+                      }
                       if (imageUrl == null) {
                         CustomSnackbar.showErrorSnackBar(context,
                             message:
@@ -713,88 +746,63 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                       }
 
                       if (_formKey.currentState?.validate() == true) {
-                        if (recipient == Recipient.thirdParty) {
-                          if (_recipientKey.currentState?.validate() == true) {
-                            reader.createPackage(
-                              payload: {
-                                "name": nameOfItem.text.trim(),
-                                "instructions": instructions.text.trim(),
-                                "receiverName": recipientName.text.trim(),
-                                "receiverPhone": recipientPhone.text.trim(),
-                                "photoUrls": [imageUrl],
-                                "worth": Utility.convertToRealNumber(
-                                    worthOfItem.text.trim()),
-                                "fragile": checkedValue,
-                                "weight": deliveryType?.name.toUpperCase(),
-                              },
-                              onSuccess: (String packageID) {
-                                reader.createDelivery(
-                                  payload: {
-                                    "pickupAddress": pickUpAddress.text.trim(),
-                                    "deliveryAddress":
-                                        dropOffAddress.text.trim(),
-                                    "packageId": packageID,
-                                    "pickupLandmark":
-                                        pickUpLandmarkController.text.trim(),
-                                    "deliveryLandmark":
-                                        dropOffLandmarkController.text.trim()
-                                  },
-                                  pickupId: pickUpLandmark!.placeId!,
-                                  dropoffId: dropOffLandmark!.placeId!,
-                                  onSuccess: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const SelectCourier(),
-                                        ));
-                                  },
-                                  onError: (p0) {
-                                    CustomSnackbar.showErrorSnackBar(context,
-                                        message: p0);
-                                  },
-                                );
-                              },
-                              onError: (p0) {
-                                CustomSnackbar.showErrorSnackBar(context,
-                                    message: p0);
-                              },
-                            );
-                          }
+                        if (recipient == Recipient.thirdParty &&
+                            _recipientKey.currentState?.validate() == false) {
+                          CustomSnackbar.showErrorSnackBar(context,
+                              message: "Please complete the recipient details");
                           return;
                         }
+                        final PackageInfoModel packageInfo = PackageInfoModel(
+                            nameOfItem.text.trim(),
+                            instructions.text.trim(),
+                            recipient == Recipient.thirdParty
+                                ? recipientName.text.trim()
+                                : "${profileData?.firstName} ${profileData?.lastName}",
+                            recipient == Recipient.thirdParty
+                                ? recipientPhone.text.trim()
+                                : "${profileData?.phone}",
+                            Utility.convertToRealNumber(
+                                worthOfItem.text.trim()),
+                            imageUrl,
+                            checkedValue,
+                            deliveryType?.name,
+                            pickUpAddress.text.trim(),
+                            dropOffAddress.text.trim(),
+                            pickUpLandmarkController.text.trim(),
+                            dropOffLandmarkController.text.trim());
                         reader.createPackage(
                           payload: {
-                            "name": nameOfItem.text.trim(),
-                            "instructions": instructions.text.trim(),
-                            "receiverName":
-                                "${profileData?.firstName} ${profileData?.lastName}",
-                            "receiverPhone": "${profileData?.phone}",
-                            "photoUrls": [imageUrl],
-                            "worth": Utility.convertToRealNumber(
-                                worthOfItem.text.trim()),
-                            "fragile": checkedValue,
-                            "weight": deliveryType?.name.toUpperCase(),
+                            "name": packageInfo.name,
+                            "instructions": packageInfo.instructions,
+                            "receiverName": packageInfo.receiverName,
+                            "receiverPhone": packageInfo.receiverPhone,
+                            "photoUrls": [packageInfo.photoUrl],
+                            "worth": packageInfo.worth,
+                            "fragile": packageInfo.fragile,
+                            "weight": packageInfo.weight!.toUpperCase(),
                           },
                           onSuccess: (String packageID) {
                             reader.createDelivery(
                               payload: {
-                                "pickupAddress": pickUpAddress.text.trim(),
-                                "deliveryAddress": dropOffAddress.text.trim(),
-                                "pickupLandmark":
-                                    pickUpLandmarkController.text.trim(),
-                                "deliveryLandmark":
-                                    dropOffLandmarkController.text.trim(),
-                                "packageId": packageID
+                                "pickupAddress": packageInfo.pickupAddress,
+                                "deliveryAddress": packageInfo.deliveryAddress,
+                                "packageId": packageID,
+                                "pickupLandmark": packageInfo.pickupLandmark,
+                                "deliveryLandmark": packageInfo.deliveryLandmark
                               },
                               pickupId: pickUpLandmark!.placeId!,
                               dropoffId: dropOffLandmark!.placeId!,
-                              onSuccess: () {
+                              onSuccess: (String deliveryId) {
+                                ref
+                                    .read(findCouriersProvider.notifier)
+                                    .findCouriers(deliveryId: deliveryId);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SelectCourier(),
+                                      builder: (context) => SelectCourier(
+                                        packageInfoModel: packageInfo,
+                                        deliveryId: deliveryId,
+                                      ),
                                     ));
                               },
                               onError: (p0) {
