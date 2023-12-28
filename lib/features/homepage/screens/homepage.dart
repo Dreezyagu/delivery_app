@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ojembaa_mobile/features/homepage/widget/homepage_top_widget.dart';
 import 'package:ojembaa_mobile/features/homepage/widget/homepage_whitepill.dart';
+import 'package:ojembaa_mobile/features/orders/providers/get_orders_provider.dart';
+import 'package:ojembaa_mobile/features/orders/widgets/orders_list_widget.dart';
 import 'package:ojembaa_mobile/features/request_courier/screens/deliver_package.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
@@ -53,7 +55,7 @@ class _HomepageState extends ConsumerState<Homepage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "My Deliveries",
+                      "My Orders",
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: AppColors.accent,
@@ -67,11 +69,43 @@ class _HomepageState extends ConsumerState<Homepage> {
                     ),
                   ],
                 ),
+                SizedBox(height: context.width(.03)),
 
-                SvgPicture.asset(
-                  ImageUtil.no_delivery,
-                  height: context.height(.35),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final data = ref.watch(getOrdersProvider).data;
+                    if (ref.watch(getOrdersProvider).isLoading) {
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: context.width(.2),
+                          ),
+                          const CircularProgressIndicator(),
+                        ],
+                      );
+                    }
+
+                    if (data == null || data.isEmpty) {
+                      return SvgPicture.asset(
+                        ImageUtil.no_delivery,
+                        height: context.height(.35),
+                      );
+                    }
+                    if (data.length > 5) {
+                      data.sublist(0, 5);
+                    }
+
+                    return ListView.builder(
+                      itemCount: data.length,
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      physics: const ScrollPhysics(),
+                      itemBuilder: (context, index) =>
+                          OrdersListWidget(deliveryModel: data[index]),
+                    );
+                  },
                 )
+
                 // Column(
                 //   children:
                 //       [1, 2, 3].map((e) => const OrdersListWidget()).toList(),

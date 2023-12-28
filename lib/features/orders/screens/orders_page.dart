@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/orders/providers/get_orders_provider.dart';
 import 'package:ojembaa_mobile/features/orders/widgets/orders_list_widget.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
+import 'package:ojembaa_mobile/utils/components/image_util.dart';
 
 class OrdersPage extends ConsumerWidget {
-
   const OrdersPage({super.key});
 
   @override
@@ -21,21 +23,27 @@ class OrdersPage extends ConsumerWidget {
                   fontWeight: FontWeight.w700, fontSize: context.width(.045)),
             ),
             SizedBox(height: context.height(.02)),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                shrinkWrap: true,
-                physics: const ScrollPhysics(),
-                itemBuilder: (context, index) => InkWell(
-                    onTap: () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => const OrderDetails(),
-                      //     ));
-                    },
-                    child: const OrdersListWidget()),
-              ),
+            Consumer(
+              builder: (context, ref, child) {
+                final data = ref.watch(getOrdersProvider).data;
+                if (ref.watch(getOrdersProvider).isLoading) {
+                  return const CircularProgressIndicator();
+                }
+                if (data == null || data.isEmpty) {
+                  return SvgPicture.asset(
+                    ImageUtil.no_delivery,
+                    height: context.height(.35),
+                  );
+                }
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: data.length,
+                    shrinkWrap: true,
+                    physics: const ScrollPhysics(),
+                    itemBuilder: (context, index) => OrdersListWidget(deliveryModel: data[index]),
+                  ),
+                );
+              },
             )
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/features/authentication/screens/signup_page.dart';
 import 'package:ojembaa_mobile/features/homepage/screens/nav_page.dart';
+import 'package:ojembaa_mobile/features/orders/providers/get_orders_provider.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
@@ -121,6 +122,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             context,
                                             message: p0),
                                     onSuccess: () {
+                                      ref
+                                          .read(getOrdersProvider.notifier)
+                                          .getOrders();
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
