@@ -19,7 +19,8 @@ class OrdersServices {
               (e) => DeliveryModel.fromMap(e),
             )
             .toList();
-        return (success: data, error: null);
+        final reversedData = data.reversed.toList();
+        return (success: reversedData, error: null);
       } else {
         final error = ErrorModel.fromMap(response.data);
         return (success: null, error: error.message ?? "An error occured");

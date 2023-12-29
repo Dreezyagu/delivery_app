@@ -9,7 +9,7 @@ class FindCouriersProvider
 
   void findCouriers(
       {required String deliveryId,
-      int radius = 3,
+      int radius = 5,
       Function(List<CouriersModel>)? onSuccess,
       Function(String)? onError}) async {
     state = BaseNotifier.setLoading();

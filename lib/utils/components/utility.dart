@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Utility {
   static String currencyFormatter(num amount) {
@@ -21,29 +21,6 @@ class Utility {
     return DateFormat.jm().format(date.toLocal());
   }
 
-  static num getExpectedCharge(String paymentFee, num? transactionFee) {
-    num expectedFee = 0.0;
-    num employerPercent = 0.0;
-    if (paymentFee == "employee") {
-      employerPercent = 0.0;
-      expectedFee =
-          transactionFee! - ((employerPercent / 100) * transactionFee);
-    } else if (paymentFee == "employer") {
-      employerPercent = 100.00;
-      expectedFee =
-          transactionFee! - ((employerPercent / 100) * transactionFee);
-    } else if (paymentFee == "shared") {
-      employerPercent = 50.00;
-      expectedFee =
-          transactionFee! - ((employerPercent / 100) * transactionFee);
-    } else {
-      employerPercent = 0.0;
-      expectedFee =
-          transactionFee! - ((employerPercent / 100) * transactionFee);
-    }
-    return expectedFee;
-  }
-
   static String getInitials(String fullName) {
     List<String> names = fullName.split(" ");
     String initials = "";
@@ -56,20 +33,6 @@ class Utility {
       initials += names[i][0];
     }
     return initials;
-  }
-
-  static String getBillName(String name) {
-    List<String> names = name.split("_");
-    String title = "";
-    int numWords = 1;
-
-    if (numWords < names.length) {
-      numWords = names.length;
-    }
-    for (var i = 0; i < numWords; i++) {
-      title += '${names[i].toUpperCase()} ';
-    }
-    return title;
   }
 
   static double calculateDistance(lat1, lon1, lat2, lon2) {
@@ -276,73 +239,14 @@ class Utility {
     }
   }
 
-  static int? calculateDaysLeft(
-      {required DateTime? startDate,
-      DateTime? endDate,
-      required TextEditingController amount,
-      required TextEditingController duration,
-      TextEditingController? contribution,
-      required int? noOfDays,
-      fromEdit = false,
-      String? savingFrequency,
-      required String target}) {
-    if (startDate != null && endDate != null) {
-      noOfDays = endDate.difference(startDate).inDays + 1;
-      if (amount.text.isNotEmpty) {
-        num target = Utility.convertToRealNumber(amount.text.trim());
-        if (target == 0) {
-          duration.clear();
-          return null;
-        }
-
-        int iterations = noOfDays;
-        if (savingFrequency == "Weekly") {
-          iterations = (noOfDays / 7).floor();
-          duration.text = "$iterations week(s)";
-        }
-        if (savingFrequency == "Monthly") {
-          iterations = (noOfDays / 30).floor();
-          duration.text = "$iterations month(s)";
-        }
-        if (savingFrequency == "Daily") {
-          duration.text = "$noOfDays day(s)";
-        }
-        double amountToSave = target / iterations;
-
-        contribution?.text = Utility.currencyConverter(amountToSave);
-        return noOfDays;
-      }
+  static launchURL(String url) async {
+    final encodedUrl = Uri.encodeFull(url);
+    if (await canLaunchUrl(Uri.parse(encodedUrl))) {
+      await launchUrl(Uri.parse(encodedUrl),
+          mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
     }
-    return null;
-  }
-
-  static void calculateBreakFee(
-      {required TextEditingController breaking,
-      required TextEditingController amount,
-      required num target}) {
-    if (amount.text.isNotEmpty) {
-      final num dailyContribution =
-          Utility.convertToRealNumber(amount.text.trim());
-      if (dailyContribution == 0) {
-        breaking.clear();
-        return;
-      }
-
-      breaking.text = Utility.currencyFormatter((1.5 / 100) * target);
-    }
-  }
-
-  static int daysLeft(
-      {required DateTime startDate,
-      required num goalAmount,
-      fromEdit = false,
-      required num dailyContribution}) {
-    if (goalAmount <= dailyContribution) {
-      return 0;
-    }
-
-    final int numOfDays = (goalAmount / dailyContribution).ceil();
-    return numOfDays;
   }
 
   /// Helper function to lauch any type of url.

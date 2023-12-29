@@ -168,7 +168,7 @@ class RequestServices {
       String deliveryId, int radius) async {
     try {
       final response = await dio
-          .get("${baseUrl}deliveries/$deliveryId/find-couriers?radius=3");
+          .get("${baseUrl}deliveries/$deliveryId/find-couriers?radius=$radius");
 
       if (response.data["status"] == "success") {
         final data = (response.data["data"] as List)

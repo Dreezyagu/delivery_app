@@ -96,15 +96,15 @@ class DeliverySummaryWidget extends StatelessWidget {
                 color: AppColors.accent,
               ),
               SizedBox(width: context.width(.02)),
-              Text(
-                packageInfoModel.pickupAddress ?? "",
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.accent,
-                    fontSize: context.width(.037)),
+              Expanded(
+                child: Text(
+                  "${packageInfoModel.pickupAddress ?? ""} (${packageInfoModel.pickupLandmark})",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.accent,
+                      fontSize: context.width(.037)),
+                ),
               ),
-              const Spacer(),
-              InkWell(onTap: () {}, child: const Icon(Icons.edit_outlined))
             ],
           ),
           SizedBox(height: context.height(.04)),
@@ -123,15 +123,15 @@ class DeliverySummaryWidget extends StatelessWidget {
                 color: AppColors.accent,
               ),
               SizedBox(width: context.width(.02)),
-              Text(
-                packageInfoModel.deliveryAddress ?? "",
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.accent,
-                    fontSize: context.width(.037)),
+              Expanded(
+                child: Text(
+                  "${packageInfoModel.deliveryAddress ?? ""} (${packageInfoModel.deliveryLandmark})",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.accent,
+                      fontSize: context.width(.037)),
+                ),
               ),
-              const Spacer(),
-              InkWell(onTap: () {}, child: const Icon(Icons.edit_outlined))
             ],
           ),
           extraWidget

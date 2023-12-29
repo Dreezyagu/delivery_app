@@ -56,7 +56,9 @@ class _PackageSummaryState extends ConsumerState<PackageSummary> {
               ),
               SizedBox(height: context.height(.02)),
               SelectCourierWidget(
-                onTap: null,
+                onTap: (){
+                  // Utility.launchURL("tel:${widget.couriersModel.}")
+                },
                 courier: widget.couriersModel,
                 color: AppColors.accent,
                 titleColor: AppColors.white,

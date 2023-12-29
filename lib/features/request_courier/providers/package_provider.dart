@@ -42,12 +42,12 @@ class PackageProvider extends StateNotifier<BaseNotifier<String>> {
           pickUpData.success!.lat,
           pickUpData.success!.lng,
           dropOffData.success!.lat,
-          pickUpData.success!.lng);
+          dropOffData.success!.lng);
 
       payload["pickupLat"] = pickUpData.success!.lat;
       payload["pickupLog"] = pickUpData.success!.lng;
       payload["deliveryLat"] = dropOffData.success!.lat;
-      payload["deliveryLog"] = pickUpData.success!.lng;
+      payload["deliveryLog"] = dropOffData.success!.lng;
       payload["distance"] = distance;
 
       final data = await RequestServices.createDelivery(payload);

@@ -17,7 +17,7 @@ class OrderInconvenience extends ConsumerWidget {
             horizontal: context.width(.06), vertical: context.width(.3)),
         child: Column(
           children: [
-            SvgPicture.asset(ImageUtil.delivered),
+            SvgPicture.asset(ImageUtil.delivery_inconvinience),
             SizedBox(height: context.width(.03)),
             Text(
               "Sorry for any inconvenience 😔",

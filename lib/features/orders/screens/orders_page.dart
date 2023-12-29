@@ -40,7 +40,8 @@ class OrdersPage extends ConsumerWidget {
                     itemCount: data.length,
                     shrinkWrap: true,
                     physics: const ScrollPhysics(),
-                    itemBuilder: (context, index) => OrdersListWidget(deliveryModel: data[index]),
+                    itemBuilder: (context, index) =>
+                        OrdersListWidget(deliveryModel: data[index]),
                   ),
                 );
               },

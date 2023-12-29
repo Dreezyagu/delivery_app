@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ojembaa_mobile/features/request_courier/models/couriers_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/services/request_services.dart';
 import 'package:ojembaa_mobile/utils/data_util/base_notifier.dart';
 
@@ -14,7 +13,7 @@ class PickCourierProvider extends StateNotifier<BaseNotifier<String>> {
       Function(String)? onError}) async {
     state = BaseNotifier.setLoading();
     final data = await RequestServices.pickCourier(deliveryId, courierId);
-    if (data.success is List<CouriersModel>) {
+    if (data.success is String) {
       state = BaseNotifier.setDone<String>(data.success!);
       if (onSuccess != null) {
         onSuccess();

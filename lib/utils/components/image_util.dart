@@ -36,8 +36,12 @@ class ImageUtil {
 
   static const nearby_courier = "assets/icons/nearby_courier.svg";
   static const delivered = "assets/icons/delivered.svg";
-  static const message = "assets/icons/message.svg";
+  static const delivery_inconvinience =
+      "assets/icons/delivery_inconvinience.svg";
+  static const delivery_successful = "assets/icons/delivery_successful.svg";
+  static const no_couriers = "assets/icons/no_couriers.svg";
 
+  static const message = "assets/icons/message.svg";
 
   static const icon_title = "assets/images/icon_title.svg";
   static const icon_title_accent = "assets/images/icon_title_accent.svg";
