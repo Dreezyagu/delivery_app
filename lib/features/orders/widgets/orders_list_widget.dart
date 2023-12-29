@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ojembaa_mobile/features/orders/models/delivery_model.dart';
-import 'package:ojembaa_mobile/features/orders/screens/order_details.dart';
+import 'package:ojembaa_mobile/features/orders/screens/order_confirmation.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
@@ -22,7 +22,7 @@ class OrdersListWidget extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => OrderDetails(
+              builder: (context) => OrderConfirmation(
                 deliveryModel: deliveryModel,
               ),
             ));
