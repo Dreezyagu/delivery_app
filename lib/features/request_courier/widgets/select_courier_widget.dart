@@ -109,10 +109,11 @@ class SelectCourierWidget2 extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: courier!.profilePhoto ?? "",
                   placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: AppColors.hintColor,
-                    highlightColor: AppColors.hintColor,
-                    child: const SizedBox.shrink(),
-                  ),
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: const ColoredBox(
+                        color: AppColors.white,
+                      )),
                   errorWidget: (context, url, error) => const SizedBox(
                     child: ColoredBox(color: AppColors.hintColor),
                   ),
