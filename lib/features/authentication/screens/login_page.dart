@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/features/authentication/screens/signup_page.dart';
+import 'package:ojembaa_mobile/features/homepage/providers/get_location_provider.dart';
 import 'package:ojembaa_mobile/features/homepage/screens/nav_page.dart';
 import 'package:ojembaa_mobile/features/orders/providers/get_orders_provider.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
@@ -121,10 +125,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         CustomSnackbar.showErrorSnackBar(
                                             context,
                                             message: p0),
-                                    onSuccess: () {
+                                    onSuccess: () async {
                                       ref
                                           .read(getOrdersProvider.notifier)
                                           .getOrders();
+
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -133,6 +138,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             builder: (context) =>
                                                 const NavPage(),
                                           ));
+
+                                      final permission =
+                                          await Geolocator.requestPermission();
+                                      if (permission !=
+                                              LocationPermission.denied &&
+                                          permission !=
+                                              LocationPermission
+                                                  .deniedForever) {
+                                        ref
+                                            .read(getLocationProvider.notifier)
+                                            .getCurrentLocation();
+                                      }
                                     },
                                     email: emailController.text,
                                     password: passwordController.text);
