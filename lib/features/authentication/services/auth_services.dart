@@ -9,6 +9,8 @@ class AuthServices {
   static const signUpUrl = "auth/sign-up";
   static const signInUrl = "auth/sign-in";
   static const getDetailsUrl = "me";
+  static const forgotPassUrl = "auth/reset-password";
+  static const updatePassUrl = "auth/update-password";
 
   static final HttpHelper dio = HttpHelper();
 
@@ -81,6 +83,51 @@ class AuthServices {
       if (response.data["status"] == "success") {
         final data = UserModel.fromMap(response.data["data"]);
         return (success: data, error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
+
+  static Future<({String? success, String? error})> forgotPass(
+      String email) async {
+    try {
+      final response =
+          await dio.post("$baseUrl$forgotPassUrl", data: {"email": email});
+
+      if (response.data["status"] == "success") {
+        return (success: response.data["status"] as String, error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
+
+  static Future<({String? success, String? error})> resetPass(
+      Map<String, dynamic> payload) async {
+    try {
+      final response = await dio.post("$baseUrl$updatePassUrl", data: payload);
+
+      if (response.data["status"] == "success") {
+        return (success: response.data["status"] as String, error: null);
       } else {
         final error = ErrorModel.fromMap(response.data);
         return (success: null, error: error.message ?? "An error occured");

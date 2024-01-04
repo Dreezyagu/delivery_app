@@ -8,7 +8,7 @@ class CustomContinueButton extends StatelessWidget {
   final bool isActive;
   final Color bgColor;
   final Color? textColor;
-  final Color? borderColor;
+  final Color? borderColor, disabledBgColor;
   final double? textSize;
   final double? topPadding;
   final double? innerTopPadding;
@@ -31,7 +31,8 @@ class CustomContinueButton extends StatelessWidget {
       this.bgColor = AppColors.primary,
       this.isActive = true,
       this.enabled = true,
-      this.innerTopPadding})
+      this.innerTopPadding,
+      this.disabledBgColor})
       : super(key: key);
 
   @override
@@ -46,7 +47,8 @@ class CustomContinueButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: bgColor,
             elevation: elevation,
-            disabledBackgroundColor: AppColors.white_background,
+            disabledBackgroundColor:
+                disabledBgColor ?? AppColors.white_background,
             shape: RoundedRectangleBorder(
                 side: enabled
                     ? isActive
