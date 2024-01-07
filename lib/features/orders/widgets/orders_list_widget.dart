@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ojembaa_mobile/features/orders/models/delivery_model.dart';
 import 'package:ojembaa_mobile/features/orders/screens/order_confirmation.dart';
+import 'package:ojembaa_mobile/features/orders/screens/order_details.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
@@ -19,12 +20,20 @@ class OrdersListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        if (deliveryModel.status?.toLowerCase() == "delivered") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderConfirmation(
+                  deliveryModel: deliveryModel,
+                ),
+              ));
+          return;
+        }
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => OrderConfirmation(
-                deliveryModel: deliveryModel,
-              ),
+              builder: (context) => OrderDetails(deliveryModel: deliveryModel),
             ));
       },
       child: Padding(
@@ -54,7 +63,10 @@ class OrdersListWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  (deliveryModel.status ?? "").toLowerCase().capitalize(),
+                  (deliveryModel.status ?? "")
+                      .toLowerCase()
+                      .capitalize()
+                      .replaceFirst("_", " "),
                   style: TextStyle(
                       color: AppColors.green,
                       fontWeight: FontWeight.w500,

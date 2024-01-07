@@ -77,7 +77,7 @@ class OrderDetails extends ConsumerWidget {
                               color: AppColors.green,
                               child: const SizedBox.shrink()),
                           Text(
-                            "   ${deliveryModel.status?.toLowerCase().capitalize()} ",
+                            "   ${deliveryModel.status?.toLowerCase().capitalize().replaceFirst("_", " ")} ",
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: context.width(.037)),
