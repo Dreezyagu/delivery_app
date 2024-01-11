@@ -184,34 +184,35 @@ class OrderDetails extends ConsumerWidget {
               ),
             ),
             SizedBox(height: context.height(.01)),
-            SelectCourierWidget2(
-              onTap: null,
-              courier: deliveryModel.courier,
-              color: AppColors.accent,
-              titleColor: AppColors.white,
-              subtitle: Row(
-                children: [
-                  SvgPicture.asset(
-                    ImageUtil.delivery_star2,
-                  ),
-                  Text(
-                    " 4/5",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.white,
-                        fontSize: context.width(.035)),
-                  ),
-                ],
+            if (deliveryModel.status != "COMPLETED")
+              SelectCourierWidget2(
+                onTap: null,
+                courier: deliveryModel.courier,
+                color: AppColors.accent,
+                titleColor: AppColors.white,
+                subtitle: Row(
+                  children: [
+                    SvgPicture.asset(
+                      ImageUtil.delivery_star2,
+                    ),
+                    Text(
+                      " 4/5",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.white,
+                          fontSize: context.width(.035)),
+                    ),
+                  ],
+                ),
+                trailing: Circle(
+                    color: Colors.transparent,
+                    borderColor: AppColors.primary,
+                    width: context.width(.12),
+                    child: const Icon(
+                      Icons.phone,
+                      color: AppColors.white,
+                    )),
               ),
-              trailing: Circle(
-                  color: Colors.transparent,
-                  borderColor: AppColors.primary,
-                  width: context.width(.12),
-                  child: const Icon(
-                    Icons.phone,
-                    color: AppColors.white,
-                  )),
-            ),
           ],
         ),
       ),

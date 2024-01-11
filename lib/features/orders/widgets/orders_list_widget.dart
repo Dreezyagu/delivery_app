@@ -68,7 +68,7 @@ class OrdersListWidget extends StatelessWidget {
                       .capitalize()
                       .replaceFirst("_", " "),
                   style: TextStyle(
-                      color: AppColors.green,
+                      color: const Color(0xFF00B35C),
                       fontWeight: FontWeight.w500,
                       fontSize: context.width(.035)),
                 ),

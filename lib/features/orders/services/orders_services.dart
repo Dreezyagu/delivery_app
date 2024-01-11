@@ -35,4 +35,28 @@ class OrdersServices {
       return (success: null, error: "An error occured");
     }
   }
+
+  static Future<({String? success, String? error})> markComplete(
+      String deliveryId) async {
+    try {
+      final response = await dio.patch(
+          "${baseUrl}deliveries/$deliveryId/complete",
+          body: {"status": "completed"});
+
+      if (response.data["status"] == "success") {
+        return (success: response.data["status"].toString(), error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
 }
