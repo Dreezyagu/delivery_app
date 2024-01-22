@@ -186,7 +186,9 @@ class OrderDetails extends ConsumerWidget {
             SizedBox(height: context.height(.01)),
             if (deliveryModel.status != "COMPLETED")
               SelectCourierWidget2(
-                onTap: null,
+                onTap: () {
+                  Utility.launchURL("tel:${deliveryModel.courier?.phone}");
+                },
                 courier: deliveryModel.courier,
                 color: AppColors.accent,
                 titleColor: AppColors.white,

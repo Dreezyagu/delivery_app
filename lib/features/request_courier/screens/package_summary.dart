@@ -12,7 +12,6 @@ import 'package:ojembaa_mobile/features/request_courier/widgets/select_courier_w
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
-import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/snackbar.dart';
@@ -56,11 +55,10 @@ class _PackageSummaryState extends ConsumerState<PackageSummary> {
               ),
               SizedBox(height: context.height(.02)),
               SelectCourierWidget(
-                onTap: (){
-                  // Utility.launchURL("tel:${widget.couriersModel.}")
-                },
+                onTap: () {},
                 courier: widget.couriersModel,
                 color: AppColors.accent,
+
                 titleColor: AppColors.white,
                 subtitle: Row(
                   children: [
@@ -76,14 +74,15 @@ class _PackageSummaryState extends ConsumerState<PackageSummary> {
                     ),
                   ],
                 ),
-                trailing: Circle(
-                    color: Colors.transparent,
-                    borderColor: AppColors.primary,
-                    width: context.width(.12),
-                    child: const Icon(
-                      Icons.phone,
-                      color: AppColors.white,
-                    )),
+                trailing: const SizedBox.shrink(),
+                // trailing: Circle(
+                //     color: Colors.transparent,
+                //     borderColor: AppColors.primary,
+                //     width: context.width(.12),
+                //     child: const Icon(
+                //       Icons.phone,
+                //       color: AppColors.white,
+                //     )),
               ),
               SizedBox(height: context.height(.02)),
               Consumer(builder: (context, ref, child) {

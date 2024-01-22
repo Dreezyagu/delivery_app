@@ -176,14 +176,15 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
                     ),
                   ],
                 ),
-                trailing: Circle(
-                    color: Colors.transparent,
-                    borderColor: AppColors.primary,
-                    width: context.width(.12),
-                    child: const Icon(
-                      Icons.phone,
-                      color: AppColors.white,
-                    )),
+                trailing: const SizedBox.shrink(),
+                // trailing: Circle(
+                //     color: Colors.transparent,
+                //     borderColor: AppColors.primary,
+                //     width: context.width(.12),
+                //     child: const Icon(
+                //       Icons.phone,
+                //       color: AppColors.white,
+                //     )),
               ),
               SizedBox(height: context.height(.005)),
               GestureDetector(

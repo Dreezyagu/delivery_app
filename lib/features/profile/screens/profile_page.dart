@@ -7,6 +7,7 @@ import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
+import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -111,7 +112,59 @@ class ProfilePage extends ConsumerWidget {
                 icon: ImageUtil.logout,
               ),
               ProfileItemsWidget(
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      backgroundColor: AppColors.white,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: context.width(.06),
+                            vertical: context.width(.06)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Delete account",
+                              style: TextStyle(
+                                  fontSize: context.width(.05),
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.black),
+                            ),
+                            SizedBox(height: context.width(.03)),
+                            Text.rich(
+                              TextSpan(
+                                  text:
+                                      "We are sorry to see you leaving. Kindly contact ",
+                                  style: TextStyle(
+                                      fontSize: context.width(.04),
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.5,
+                                      color: AppColors.black),
+                                  children: const [
+                                    TextSpan(
+                                      text: "hello@ojembaa.com",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.primary),
+                                    ),
+                                    TextSpan(text: " to complete this process.")
+                                  ]),
+                            ),
+                            SizedBox(height: context.width(.06)),
+                            CustomContinueButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              title: "Okay",
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
                 title: "Delete account",
                 icon: ImageUtil.delete,
               ),
