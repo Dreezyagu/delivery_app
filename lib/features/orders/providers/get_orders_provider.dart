@@ -13,8 +13,7 @@ class GetOrdersProvider
     final data = await OrdersServices.getOrders();
     if (data.success is List<DeliveryModel>) {
       data.success?.removeWhere((element) => element.courier == null);
-      final datum = data.success?.reversed.toList();
-      state = BaseNotifier.setDone<List<DeliveryModel>>(datum!);
+      state = BaseNotifier.setDone<List<DeliveryModel>>(data.success!);
       if (onSuccess != null) {
         onSuccess();
       }
