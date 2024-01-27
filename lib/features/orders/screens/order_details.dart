@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/orders/models/delivery_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/delivery_summary_widget.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/select_courier_widget.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/utility.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/white_pill.dart';
 
 class OrderDetails extends ConsumerWidget {
-  const OrderDetails({super.key});
+  final DeliveryModel deliveryModel;
+
+  const OrderDetails({super.key, required this.deliveryModel});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +31,8 @@ class OrderDetails extends ConsumerWidget {
             horizontal: context.width(.04), vertical: context.height(.02)),
         child: Column(
           children: [
-            DeliverySummaryWidget(
+            DeliverySummaryWidget2(
+              package: deliveryModel,
               extraWidget: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -49,7 +54,7 @@ class OrderDetails extends ConsumerWidget {
                               )),
                           SizedBox(width: context.width(.02)),
                           Text(
-                            "Medium Delivery",
+                            "${deliveryModel.package?.weight?.toLowerCase().capitalize()} delivery",
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: context.width(.035)),
@@ -72,7 +77,7 @@ class OrderDetails extends ConsumerWidget {
                               color: AppColors.green,
                               child: const SizedBox.shrink()),
                           Text(
-                            "   Delivered ",
+                            "   ${deliveryModel.status?.toLowerCase().capitalize().replaceFirst("_", " ")} ",
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: context.width(.037)),
@@ -103,7 +108,8 @@ class OrderDetails extends ConsumerWidget {
                         style: TextStyle(fontSize: context.width(.033)),
                       ),
                       Text(
-                        "₦15,000",
+                        Utility.currencyConverter(Utility.convertToRealNumber(
+                            deliveryModel.totalCost ?? "0")),
                         style: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: AppColors.red,
@@ -111,9 +117,9 @@ class OrderDetails extends ConsumerWidget {
                       ),
                       Row(
                         children: [
-                          SvgPicture.asset(ImageUtil.pay_transfer),
+                          SvgPicture.asset(ImageUtil.pay_cash),
                           Text(
-                            "  Paid via bank transfer",
+                            "  Pay on delivery",
                             style: TextStyle(
                                 fontStyle: FontStyle.italic,
                                 fontSize: context.width(.035)),
@@ -165,7 +171,7 @@ class OrderDetails extends ConsumerWidget {
                           ),
                           SizedBox(width: context.width(.015)),
                           Text(
-                            "Regular\nDelivery",
+                            "${deliveryModel.deliveryMode?.capitalize()}\nDelivery",
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: context.width(.035)),
@@ -178,33 +184,37 @@ class OrderDetails extends ConsumerWidget {
               ),
             ),
             SizedBox(height: context.height(.01)),
-            SelectCourierWidget(
-              onTap: null,
-              color: AppColors.accent,
-              titleColor: AppColors.white,
-              subtitle: Row(
-                children: [
-                  SvgPicture.asset(
-                    ImageUtil.delivery_star2,
-                  ),
-                  Text(
-                    " 4/5",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.white,
-                        fontSize: context.width(.035)),
-                  ),
-                ],
+            if (deliveryModel.status != "COMPLETED")
+              SelectCourierWidget2(
+                onTap: () {
+                  Utility.launchURL("tel:${deliveryModel.courier?.phone}");
+                },
+                courier: deliveryModel.courier,
+                color: AppColors.accent,
+                titleColor: AppColors.white,
+                subtitle: Row(
+                  children: [
+                    SvgPicture.asset(
+                      ImageUtil.delivery_star2,
+                    ),
+                    Text(
+                      " 4/5",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.white,
+                          fontSize: context.width(.035)),
+                    ),
+                  ],
+                ),
+                trailing: Circle(
+                    color: Colors.transparent,
+                    borderColor: AppColors.primary,
+                    width: context.width(.12),
+                    child: const Icon(
+                      Icons.phone,
+                      color: AppColors.white,
+                    )),
               ),
-              trailing: Circle(
-                  color: Colors.transparent,
-                  borderColor: AppColors.primary,
-                  width: context.width(.12),
-                  child: const Icon(
-                    Icons.phone,
-                    color: AppColors.white,
-                  )),
-            ),
           ],
         ),
       ),

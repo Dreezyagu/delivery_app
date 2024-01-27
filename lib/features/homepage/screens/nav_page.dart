@@ -19,8 +19,7 @@ class _NavPageState extends State<NavPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-          WillPopScope(onWillPop: () => Future.value(false), child: getBody()),
+      body: PopScope(canPop: false, child: getBody()),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         backgroundColor: const Color(0xffFEE1A7),
@@ -52,16 +51,16 @@ class _NavPageState extends State<NavPage> {
                               : AppColors.default_icon,
                           BlendMode.srcIn))),
               label: "My Orders"),
-          BottomNavigationBarItem(
-              icon: Padding(
-                  padding: EdgeInsets.symmetric(vertical: context.width(.02)),
-                  child: SvgPicture.asset(ImageUtil.notification,
-                      colorFilter: ColorFilter.mode(
-                          selectedIndex == 2
-                              ? AppColors.primary
-                              : AppColors.default_icon,
-                          BlendMode.srcIn))),
-              label: "Notification"),
+          // BottomNavigationBarItem(
+          //     icon: Padding(
+          //         padding: EdgeInsets.symmetric(vertical: context.width(.02)),
+          //         child: SvgPicture.asset(ImageUtil.notification,
+          //             colorFilter: ColorFilter.mode(
+          //                 selectedIndex == 2
+          //                     ? AppColors.primary
+          //                     : AppColors.default_icon,
+          //                 BlendMode.srcIn))),
+          //     label: "Notification"),
           BottomNavigationBarItem(
               icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: context.width(.02)),
@@ -82,7 +81,7 @@ class _NavPageState extends State<NavPage> {
       return const Homepage();
     } else if (selectedIndex == 1) {
       return const OrdersPage();
-    } else if (selectedIndex == 3) {
+    } else if (selectedIndex == 2) {
       return const ProfilePage();
     } else {
       return const Homepage();

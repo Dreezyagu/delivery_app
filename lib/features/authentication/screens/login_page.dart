@@ -1,9 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
+import 'package:ojembaa_mobile/features/authentication/screens/forgot_password.dart';
 import 'package:ojembaa_mobile/features/authentication/screens/signup_page.dart';
+import 'package:ojembaa_mobile/features/homepage/providers/get_location_provider.dart';
 import 'package:ojembaa_mobile/features/homepage/screens/nav_page.dart';
+import 'package:ojembaa_mobile/features/orders/providers/get_orders_provider.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
@@ -22,7 +28,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController emailController =
       TextEditingController(text: "ifeanyi@mailinator.com");
   final TextEditingController passwordController =
-      TextEditingController(text: "Password123");
+      TextEditingController(text: "Password@1");
   bool obscure = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -97,14 +103,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                       ),
                       SizedBox(height: context.height(.025)),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Forgot your password?",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: context.width(.04),
-                              fontWeight: FontWeight.w400),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ForgotPassword(),
+                              ));
+                        },
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Forgot your password?",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: context.width(.04),
+                                fontWeight: FontWeight.w400),
+                          ),
                         ),
                       ),
                       SizedBox(height: context.height(.01)),
@@ -120,7 +135,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         CustomSnackbar.showErrorSnackBar(
                                             context,
                                             message: p0),
-                                    onSuccess: () {
+                                    onSuccess: () async {
+                                      ref
+                                          .read(getOrdersProvider.notifier)
+                                          .getOrders();
+
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -129,6 +148,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             builder: (context) =>
                                                 const NavPage(),
                                           ));
+
+                                      final permission =
+                                          await Geolocator.requestPermission();
+                                      if (permission !=
+                                              LocationPermission.denied &&
+                                          permission !=
+                                              LocationPermission
+                                                  .deniedForever) {
+                                        ref
+                                            .read(getLocationProvider.notifier)
+                                            .getCurrentLocation();
+                                      }
                                     },
                                     email: emailController.text,
                                     password: passwordController.text);

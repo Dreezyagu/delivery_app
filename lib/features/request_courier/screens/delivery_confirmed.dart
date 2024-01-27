@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/orders/providers/get_orders_provider.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
@@ -11,8 +13,8 @@ class DeliveryConfirmed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () => Future.value(false),
+      body: PopScope(
+        canPop: false,
         child: Center(
           child: Column(
             children: [
@@ -35,12 +37,16 @@ class DeliveryConfirmed extends StatelessWidget {
                     fontSize: context.width(.045)),
               ),
               const Spacer(),
-              CustomContinueButton(
-                onPressed: () {
-                  Navigator.popUntil(context, ModalRoute.withName("/mainPage"));
-                },
-                title: "Back to home",
-              ),
+              Consumer(builder: (context, ref, child) {
+                return CustomContinueButton(
+                  onPressed: () {
+                    ref.read(getOrdersProvider.notifier).getOrders();
+                    Navigator.popUntil(
+                        context, ModalRoute.withName("/mainPage"));
+                  },
+                  title: "Back to home",
+                );
+              }),
               SizedBox(height: context.height(.05))
             ],
           ),

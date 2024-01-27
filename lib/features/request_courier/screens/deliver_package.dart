@@ -8,7 +8,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/autocomplete_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/package_info_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/auto_complete_provider.dart';
+import 'package:ojembaa_mobile/features/request_courier/providers/find_couriers_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/package_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/upload_asset_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/screens/select_courier.dart';
@@ -19,6 +21,7 @@ import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/components/number_formatter.dart';
+import 'package:ojembaa_mobile/utils/components/utility.dart';
 import 'package:ojembaa_mobile/utils/components/validators.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
@@ -226,6 +229,19 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),
                               keyboardType: TextInputType.name,
+                              suffix: pickUpLandmarkController.text.isEmpty
+                                  ? null
+                                  : IconButton(
+                                      onPressed: () {
+                                        pickUpLandmark = null;
+                                        pickUpLandmarkController.clear();
+                                        reader.reset();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(
+                                        Icons.cancel,
+                                        color: AppColors.hintColor,
+                                      )),
                               prefix: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical: context.width(.015)),
@@ -334,6 +350,19 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),
                               keyboardType: TextInputType.name,
+                              suffix: dropOffLandmarkController.text.isEmpty
+                                  ? null
+                                  : IconButton(
+                                      onPressed: () {
+                                        dropOffLandmark = null;
+                                        dropOffLandmarkController.clear();
+                                        reader.reset();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(
+                                        Icons.cancel,
+                                        color: AppColors.hintColor,
+                                      )),
                               prefix: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical: context.width(.015)),
@@ -426,22 +455,26 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                           _file = File(val.path);
                                           if (_file != null) {
                                             reader.uploadPicture(
-                                              file: _file!,
-                                              onSuccess: () {
-                                                imageUrl = data.data;
-                                                CustomSnackbar
-                                                    .showSuccessSnackBar(
-                                                        _scaffoldKey
-                                                            .currentContext!,
-                                                        message:
-                                                            "Upload successful");
-                                              },
-                                              onError: (p0) => CustomSnackbar
-                                                  .showErrorSnackBar(
-                                                      _scaffoldKey
-                                                          .currentContext!,
-                                                      message: p0),
-                                            );
+                                                file: _file!,
+                                                onSuccess: (String url) {
+                                                  setState(() {
+                                                    imageUrl = url;
+                                                  });
+                                                  CustomSnackbar
+                                                      .showSuccessSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message:
+                                                              "Upload successful");
+                                                },
+                                                onError: (p0) {
+                                                  _file = null;
+                                                  CustomSnackbar
+                                                      .showErrorSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message: p0);
+                                                });
                                           }
                                         },
                                         onCanceled: () =>
@@ -455,22 +488,26 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                           _file = File(val.path);
                                           if (_file != null) {
                                             reader.uploadPicture(
-                                              file: _file!,
-                                              onSuccess: () {
-                                                imageUrl = data.data;
-                                                CustomSnackbar
-                                                    .showSuccessSnackBar(
-                                                        _scaffoldKey
-                                                            .currentContext!,
-                                                        message:
-                                                            "Upload successful");
-                                              },
-                                              onError: (p0) => CustomSnackbar
-                                                  .showErrorSnackBar(
-                                                      _scaffoldKey
-                                                          .currentContext!,
-                                                      message: p0),
-                                            );
+                                                file: _file!,
+                                                onSuccess: (String url) {
+                                                  setState(() {
+                                                    imageUrl = url;
+                                                  });
+                                                  CustomSnackbar
+                                                      .showSuccessSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message:
+                                                              "Upload successful");
+                                                },
+                                                onError: (p0) {
+                                                  _file = null;
+                                                  CustomSnackbar
+                                                      .showErrorSnackBar(
+                                                          _scaffoldKey
+                                                              .currentContext!,
+                                                          message: p0);
+                                                });
                                           }
                                         },
                                         onCanceled: () =>
@@ -486,7 +523,7 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                   EdgeInsets.only(left: context.width(.02)),
                               child: Row(
                                 children: [
-                                  _file != null
+                                  imageUrl != null
                                       ? SizedBox(
                                           height: context.width(.15),
                                           // width: context.width(.2),
@@ -696,6 +733,11 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                             message: "Please upload a picture of item(s)");
                         return;
                       }
+                      if (recipient == null) {
+                        CustomSnackbar.showErrorSnackBar(context,
+                            message: "Please select a recipient");
+                        return;
+                      }
                       if (imageUrl == null) {
                         CustomSnackbar.showErrorSnackBar(context,
                             message:
@@ -704,24 +746,63 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                       }
 
                       if (_formKey.currentState?.validate() == true) {
-                        if (recipient == Recipient.thirdParty) {
-                          if (_recipientKey.currentState?.validate() == true) {
-                            reader.createPackage(
+                        if (recipient == Recipient.thirdParty &&
+                            _recipientKey.currentState?.validate() == false) {
+                          CustomSnackbar.showErrorSnackBar(context,
+                              message: "Please complete the recipient details");
+                          return;
+                        }
+                        final PackageInfoModel packageInfo = PackageInfoModel(
+                            nameOfItem.text.trim(),
+                            instructions.text.trim(),
+                            recipient == Recipient.thirdParty
+                                ? recipientName.text.trim()
+                                : "${profileData?.firstName} ${profileData?.lastName}",
+                            recipient == Recipient.thirdParty
+                                ? recipientPhone.text.trim()
+                                : "${profileData?.phone}",
+                            Utility.convertToRealNumber(
+                                worthOfItem.text.trim()),
+                            imageUrl,
+                            checkedValue,
+                            deliveryType?.name,
+                            pickUpAddress.text.trim(),
+                            dropOffAddress.text.trim(),
+                            pickUpLandmarkController.text.trim(),
+                            dropOffLandmarkController.text.trim());
+                        reader.createPackage(
+                          payload: {
+                            "name": packageInfo.name,
+                            "instructions": packageInfo.instructions,
+                            "receiverName": packageInfo.receiverName,
+                            "receiverPhone": packageInfo.receiverPhone,
+                            "photoUrls": [packageInfo.photoUrl],
+                            "worth": packageInfo.worth,
+                            "fragile": packageInfo.fragile,
+                            "weight": packageInfo.weight!.toUpperCase(),
+                          },
+                          onSuccess: (String packageID) {
+                            reader.createDelivery(
                               payload: {
-                                "name": nameOfItem.text.trim(),
-                                "instructions": instructions.text.trim(),
-                                "receiverName": recipientName.text.trim(),
-                                "receiverPhone": recipientPhone.text.trim(),
-                                "photoUrls": [imageUrl],
-                                "minPrice": worthOfItem.text.trim(),
-                                "maxPrice": worthOfItem.text.trim(),
+                                "pickupAddress": packageInfo.pickupAddress,
+                                "deliveryAddress": packageInfo.deliveryAddress,
+                                "packageId": packageID,
+                                "pickupLandmark": packageInfo.pickupLandmark,
+                                "deliveryLandmark": packageInfo.deliveryLandmark
                               },
-                              onSuccess: () {
+                              pickupId: pickUpLandmark!.placeId!,
+                              dropoffId: dropOffLandmark!.placeId!,
+                              onSuccess: (String deliveryId) {
+                                ref
+                                    .read(findCouriersProvider.notifier)
+                                    .findCouriers(deliveryId: deliveryId);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SelectCourier(),
+                                      builder: (context) => SelectCourier(
+                                        packageInfoModel: packageInfo,
+                                        deliveryId: deliveryId,
+                                      ),
                                     ));
                               },
                               onError: (p0) {
@@ -729,26 +810,6 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                                     message: p0);
                               },
                             );
-                          }
-                          return;
-                        }
-                        reader.createPackage(
-                          payload: {
-                            "name": nameOfItem.text.trim(),
-                            "instructions": instructions.text.trim(),
-                            "receiverName":
-                                "${profileData?.firstName} ${profileData?.lastName}",
-                            "receiverPhone": "${profileData?.phone}",
-                            "photoUrls": [imageUrl],
-                            "minPrice": worthOfItem.text.trim(),
-                            "maxPrice": worthOfItem.text.trim(),
-                          },
-                          onSuccess: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SelectCourier(),
-                                ));
                           },
                           onError: (p0) {
                             CustomSnackbar.showErrorSnackBar(context,

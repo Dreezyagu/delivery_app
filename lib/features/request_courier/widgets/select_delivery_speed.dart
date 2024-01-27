@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/utility.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 
 class SelectDeliverySpeed extends StatelessWidget {
@@ -11,11 +12,13 @@ class SelectDeliverySpeed extends StatelessWidget {
     required this.deliverySpeed,
     this.selectedDeliverySpeed,
     required this.onChanged,
+    this.amount,
   });
 
   final DeliverySpeed deliverySpeed;
   final DeliverySpeed? selectedDeliverySpeed;
   final Function(DeliverySpeed?) onChanged;
+  final num? amount;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +69,7 @@ class SelectDeliverySpeed extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          "₦15,000",
+                          Utility.currencyConverter(amount ?? 15000),
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: AppColors.red,
@@ -90,7 +93,9 @@ class SelectDeliverySpeed extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          "1-3 days",
+                          deliverySpeed == DeliverySpeed.Express
+                              ? "1 day"
+                              : "1-3 days",
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: AppColors.accent,

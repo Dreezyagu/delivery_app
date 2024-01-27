@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/couriers_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/package_info_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/providers/pick_courier_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/screens/delivery_confirmed.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/delivery_summary_widget.dart';
 import 'package:ojembaa_mobile/features/request_courier/widgets/select_courier_widget.dart';
@@ -9,14 +12,26 @@ import 'package:ojembaa_mobile/features/request_courier/widgets/select_payment_m
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/utility.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
+import 'package:ojembaa_mobile/utils/widgets/snackbar.dart';
 
 class PaymentMethod extends ConsumerStatefulWidget {
-  const PaymentMethod({required this.deliverySpeed, super.key});
+  const PaymentMethod(
+      {required this.packageInfoModel,
+      required this.deliverySpeed,
+      required this.couriersModel,
+      required this.amount,
+      required this.deliveryId,
+      super.key});
 
   final DeliverySpeed deliverySpeed;
+  final PackageInfoModel packageInfoModel;
+  final CouriersModel couriersModel;
+  final num amount;
+  final String deliveryId;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PaymentMethodState();
@@ -40,6 +55,7 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
           child: Column(
             children: [
               DeliverySummaryWidget(
+                packageInfoModel: widget.packageInfoModel,
                 extraWidget: Column(
                   children: [
                     SizedBox(
@@ -94,7 +110,7 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
                                       fontSize: context.width(.033)),
                                 ),
                                 Text(
-                                  "₦15,000",
+                                  Utility.currencyConverter(widget.amount),
                                   style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       color: AppColors.red,
@@ -123,7 +139,9 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
                                       fontSize: context.width(.035)),
                                 ),
                                 Text(
-                                  "1-3 days",
+                                  widget.deliverySpeed == DeliverySpeed.Express
+                                      ? "1 day"
+                                      : "1-3 days",
                                   style: TextStyle(
                                       fontWeight: FontWeight.w400,
                                       color: AppColors.accent,
@@ -141,6 +159,7 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
               SizedBox(height: context.height(.01)),
               SelectCourierWidget(
                 onTap: null,
+                courier: widget.couriersModel,
                 color: AppColors.accent,
                 titleColor: AppColors.white,
                 subtitle: Row(
@@ -157,14 +176,15 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
                     ),
                   ],
                 ),
-                trailing: Circle(
-                    color: Colors.transparent,
-                    borderColor: AppColors.primary,
-                    width: context.width(.12),
-                    child: const Icon(
-                      Icons.phone,
-                      color: AppColors.white,
-                    )),
+                trailing: const SizedBox.shrink(),
+                // trailing: Circle(
+                //     color: Colors.transparent,
+                //     borderColor: AppColors.primary,
+                //     width: context.width(.12),
+                //     child: const Icon(
+                //       Icons.phone,
+                //       color: AppColors.white,
+                //     )),
               ),
               SizedBox(height: context.height(.005)),
               GestureDetector(
@@ -183,49 +203,68 @@ class _PaymentMethodState extends ConsumerState<PaymentMethod> {
                   },
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    paymentType = PaymentType.Transfer;
-                  });
-                },
-                child: SelectPaymentMethod(
-                  paymentType: PaymentType.Transfer,
-                  selectedPaymentType: paymentType,
-                  onChanged: (p0) {
-                    setState(() {
-                      paymentType = p0;
-                    });
-                  },
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    paymentType = PaymentType.Card;
-                  });
-                },
-                child: SelectPaymentMethod(
-                  paymentType: PaymentType.Card,
-                  selectedPaymentType: paymentType,
-                  onChanged: (p0) {
-                    setState(() {
-                      paymentType = p0;
-                    });
-                  },
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     setState(() {
+              //       paymentType = PaymentType.Transfer;
+              //     });
+              //   },
+              //   child: SelectPaymentMethod(
+              //     paymentType: PaymentType.Transfer,
+              //     selectedPaymentType: paymentType,
+              //     onChanged: (p0) {
+              //       setState(() {
+              //         paymentType = p0;
+              //       });
+              //     },
+              //   ),
+              // ),
+              // GestureDetector(
+              //   onTap: () {
+              //     setState(() {
+              //       paymentType = PaymentType.Card;
+              //     });
+              //   },
+              //   child: SelectPaymentMethod(
+              //     paymentType: PaymentType.Card,
+              //     selectedPaymentType: paymentType,
+              //     onChanged: (p0) {
+              //       setState(() {
+              //         paymentType = p0;
+              //       });
+              //     },
+              //   ),
+              // ),
               SizedBox(height: context.height(.01)),
-              CustomContinueButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const DeliveryConfirmed()));
-                },
-                sidePadding: 0,
-                title: "Confirm",
-              )
+              Consumer(builder: (context, ref, child) {
+                final reader = ref.read(pickCourierProvider.notifier);
+                final data = ref.watch(pickCourierProvider);
+                return CustomContinueButton(
+                  onPressed: () {
+                    if (paymentType == null) {
+                      CustomSnackbar.showErrorSnackBar(context,
+                          message: "Please select a payment method");
+                      return;
+                    }
+                    reader.pickCourier(
+                      deliveryId: widget.deliveryId,
+                      courierId: widget.couriersModel.id!,
+                      onSuccess: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const DeliveryConfirmed()));
+                      },
+                      onError: (p0) => CustomSnackbar.showErrorSnackBar(context,
+                          message: p0),
+                    );
+                  },
+                  isActive: !data.isLoading,
+                  sidePadding: 0,
+                  title: "Confirm",
+                );
+              })
             ],
           ),
         ),
