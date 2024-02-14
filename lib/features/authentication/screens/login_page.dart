@@ -25,10 +25,8 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final TextEditingController emailController =
-      TextEditingController(text: "ifeanyi@mailinator.com");
-  final TextEditingController passwordController =
-      TextEditingController(text: "Password@1");
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool obscure = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -129,6 +127,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           final reader = ref.read(signInProvider.notifier);
                           return CustomContinueButton(
                             onPressed: () {
+                              FocusScope.of(context).unfocus();
                               if (_formKey.currentState?.validate() == true) {
                                 reader.signIn(
                                     onError: (p0) =>

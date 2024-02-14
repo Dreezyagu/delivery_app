@@ -6,6 +6,7 @@ import 'package:ojembaa_mobile/features/authentication/providers/signup_provider
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/components/utility.dart';
 import 'package:ojembaa_mobile/utils/components/validators.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
@@ -25,6 +26,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPassController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  bool? checkedValue = false;
 
   bool obscure = true;
   bool obscure2 = true;
@@ -191,8 +193,59 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         )),
                   ),
                 ),
-                SizedBox(height: context.height(.05)),
-                SizedBox(height: context.height(.005)),
+                SizedBox(height: context.height(.04)),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Checkbox(
+                        value: checkedValue,
+                        checkColor: AppColors.white, // color of tick Mark
+                        activeColor: AppColors.primary,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            checkedValue = value;
+                          });
+                        }),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => Utility.launchURL(
+                            "https://www.ojembaa.com/terms-conditions"),
+                        child: Text.rich(
+                          TextSpan(
+                            style: TextStyle(
+                              fontSize: context.width(.037),
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.black,
+                            ),
+                            children: const [
+                              TextSpan(
+                                text: "I agree with Ojembaa's ",
+                                style: TextStyle(),
+                              ),
+                              TextSpan(
+                                text: "terms, conditions ",
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "and ",
+                                style: TextStyle(),
+                              ),
+                              TextSpan(
+                                text: " privacy policy",
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Consumer(
                   builder: (context, ref, child) {
                     final data = ref.watch(signUpProvider);
@@ -201,6 +254,12 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                     return CustomContinueButton(
                       onPressed: () {
                         if (_formKey.currentState?.validate() == true) {
+                          if (checkedValue != true) {
+                            CustomSnackbar.showErrorSnackBar(context,
+                                message:
+                                    "Please accept the terms and conditions");
+                            return;
+                          }
                           reader.signUp(
                               onError: (p0) => CustomSnackbar.showErrorSnackBar(
                                   context,
