@@ -224,7 +224,11 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               controller: pickUpLandmarkController,
                               borderColor: AppColors.white,
                               onChange: (value) {
-                                reader.autoCompleteQuery(query: value);
+                                if (value.length > 1) {
+                                  reader.autoCompleteQuery(query: value);
+                                } else if (value.isEmpty) {
+                                  reader.reset();
+                                }
                               },
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),
@@ -345,7 +349,11 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               controller: dropOffLandmarkController,
                               borderColor: AppColors.white,
                               onChange: (value) {
-                                reader.autoCompleteQuery(query: value);
+                                if (value.length > 1) {
+                                  reader.autoCompleteQuery(query: value);
+                                } else if (value.isEmpty) {
+                                  reader.reset();
+                                }
                               },
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),

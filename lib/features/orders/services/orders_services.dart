@@ -59,4 +59,27 @@ class OrdersServices {
       return (success: null, error: "An error occured");
     }
   }
+
+  static Future<({String? success, String? error})> rateDelivery(
+      String id, String feedback, int rating) async {
+    try {
+      final response = await dio.post("${baseUrl}deliveries/$id/ratings",
+          data: {"rating": rating, "feedback": feedback});
+
+      if (response.statusCode == 201) {
+        return (success: "Successfully rated delivery", error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
 }

@@ -59,7 +59,8 @@ class _OrderConfirmationState extends ConsumerState<OrderConfirmation> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const OrderSuccess(),
+                            builder: (context) =>
+                                OrderSuccess(widget.deliveryModel.id!),
                           ));
                     },
                     onError: (p0) =>

@@ -38,9 +38,11 @@ class _HomepageTopWidgetState extends State<HomepageTopWidget> {
           height: context.height(.3),
           padding: EdgeInsets.symmetric(horizontal: context.width(.06)),
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               color: AppColors.primary,
-              borderRadius: BorderRadius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -12,7 +12,7 @@
         </intent> 
     </queries>
     <application
-        android:label="ojembaa_mobile"
+        android:label="Ojembaa"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

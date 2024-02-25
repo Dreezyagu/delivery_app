@@ -25,8 +25,10 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController =
+      TextEditingController(text: "ifeanyi@mailinator.com");
+  final TextEditingController passwordController =
+      TextEditingController(text: "Password@1");
   bool obscure = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -92,7 +94,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 });
                               },
                               icon: Icon(
-                                obscure
+                                !obscure
                                     ? Icons.visibility_outlined
                                     : Icons.visibility_off_outlined,
                                 color: AppColors.hintColor,
