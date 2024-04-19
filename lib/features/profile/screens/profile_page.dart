@@ -8,12 +8,21 @@ import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
+import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 
-class ProfilePage extends ConsumerWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
     final profileData = ref.watch(signInProvider).data;
     return Scaffold(
       body: SafeArea(
@@ -57,18 +66,18 @@ class ProfilePage extends ConsumerWidget {
                 ],
               ),
               SizedBox(height: context.height(.06)),
-              ProfileItemsWidget(
-                onTap: () {},
-                title: "Edit Personal details",
-                subtitle: "Image, Phone, Email and password",
-                icon: ImageUtil.person,
-              ),
-              ProfileItemsWidget(
-                onTap: () {},
-                title: "Notification Setting",
-                subtitle: "Set your alerts and means of notification",
-                icon: ImageUtil.fancy_notification,
-              ),
+              // ProfileItemsWidget(
+              //   onTap: () {},
+              //   title: "Edit Personal details",
+              //   subtitle: "Image, Phone, Email and password",
+              //   icon: ImageUtil.person,
+              // ),
+              // ProfileItemsWidget(
+              //   onTap: () {},
+              //   title: "Notification Setting",
+              //   subtitle: "Set your alerts and means of notification",
+              //   icon: ImageUtil.fancy_notification,
+              // ),
               ProfileItemsWidget(
                 onTap: () {
                   showDialog(
@@ -115,53 +124,96 @@ class ProfilePage extends ConsumerWidget {
                 onTap: () {
                   showDialog(
                     context: context,
-                    builder: (context) => Dialog(
+                    builder: (context) => AlertDialog(
                       backgroundColor: AppColors.white,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: context.width(.06),
-                            vertical: context.width(.06)),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Delete account",
-                              style: TextStyle(
-                                  fontSize: context.width(.05),
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.black),
-                            ),
-                            SizedBox(height: context.width(.03)),
-                            Text.rich(
-                              TextSpan(
-                                  text:
-                                      "We are sorry to see you leaving. Kindly contact ",
-                                  style: TextStyle(
-                                      fontSize: context.width(.04),
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.5,
-                                      color: AppColors.black),
-                                  children: const [
-                                    TextSpan(
-                                      text: "hello@ojembaa.com",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.primary),
-                                    ),
-                                    TextSpan(text: " to complete this process.")
-                                  ]),
-                            ),
-                            SizedBox(height: context.width(.06)),
-                            CustomContinueButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              title: "Okay",
-                            )
-                          ],
-                        ),
+                      title: Text(
+                        "Delete Account",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: context.width(.045)),
                       ),
+                      content: Text(
+                        "Are you sure you want to delete your account?",
+                        style: TextStyle(fontSize: context.width(.04)),
+                      ),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "No",
+                              style: TextStyle(fontSize: context.width(.038)),
+                            )),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              showModalBottomSheet(
+                                context: context,
+                                isDismissible: false,
+                                enableDrag: false,
+                                builder: (context) => StatefulBuilder(
+                                    builder: (context, setState) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 24),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          "Kindly enter your password",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: context.width(.045)),
+                                        ),
+                                        const SizedBox(height: 30),
+                                        CustomTextFormField(
+                                          controller: passwordController,
+                                          hintText: "Password",
+                                          obscureText: true,
+                                          prefix: Container(
+                                            margin: EdgeInsets.only(
+                                                left: context.width(.06),
+                                                right: context.width(.03)),
+                                            child: SvgPicture.asset(
+                                              ImageUtil.password,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 60),
+                                        CustomContinueButton(
+                                          onPressed: () {
+                                            if (passwordController
+                                                .text.isNotEmpty) {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+                                              Future.delayed(
+                                                const Duration(seconds: 90),
+                                                () {
+                                                  Navigator.popUntil(
+                                                      context,
+                                                      ModalRoute.withName(
+                                                          "/loginPage"));
+                                                },
+                                              );
+                                            }
+                                          },
+                                          isActive: !isLoading,
+                                          title: "Delete Account",
+                                          sidePadding: 0,
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              );
+                            },
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(fontSize: context.width(.038)),
+                            )),
+                      ],
                     ),
                   );
                 },
