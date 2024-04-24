@@ -133,7 +133,11 @@ class RequestServices {
     } on DioException catch (e) {
       ErrorModel? error;
       if (e.response != null) {
-        error = ErrorModel.fromMap(e.response?.data);
+        try {
+          error = ErrorModel.fromMap(e.response?.data);
+        } catch (e) {
+          return (success: null, error: "File too large");
+        }
       }
       return (success: null, error: error?.message ?? "An error occured");
     } catch (e) {

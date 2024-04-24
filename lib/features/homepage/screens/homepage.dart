@@ -11,7 +11,7 @@ import 'package:ojembaa_mobile/features/request_courier/screens/deliver_package.
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
-import 'package:ojembaa_mobile/utils/components/utility.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Homepage extends ConsumerStatefulWidget {
   const Homepage({super.key});
@@ -49,9 +49,10 @@ class _HomepageState extends ConsumerState<Homepage> {
                     HomepageWhitepill(
                       title: "Refer a friend",
                       onTap: () {
-                        Utility.launchURL(Platform.isAndroid
-                            ? "https://play.google.com/store/apps/details?id=com.ojembaa.customer&hl=en&gl=US"
-                            : "https://www.ojembaa.com/terms-conditions");
+                        Share.share(
+                            "Download the Ojembaa app on the app store to get your item delivered instantly!\n\n${Platform.isAndroid ? "https://play.google.com/store/apps/details?id=com.ojembaa.customer&hl=en&gl=US" :
+                                //  "https://apps.apple.com/ng/app/ojembaa/id1582293975"
+                                ""}");
                       },
                       icon: ImageUtil.person,
                     ),

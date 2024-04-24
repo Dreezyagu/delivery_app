@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Ojembaa',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           fontFamily: "QanelasSoft",
           useMaterial3: true,
