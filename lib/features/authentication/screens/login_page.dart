@@ -33,6 +33,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bannerExpanded = MediaQuery.viewInsetsOf(context).bottom <= 10;
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: Stack(
@@ -202,12 +203,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ),
           ),
-          Align(
-              alignment: Alignment.bottomRight,
-              child: SvgPicture.asset(
-                ImageUtil.big_icon_transparent,
-                height: context.height(.3),
-              ))
+          if (bannerExpanded)
+            Align(
+                alignment: Alignment.bottomRight,
+                child: SvgPicture.asset(
+                  ImageUtil.big_icon_transparent,
+                  height: context.height(.3),
+                ))
         ],
       ),
     );
