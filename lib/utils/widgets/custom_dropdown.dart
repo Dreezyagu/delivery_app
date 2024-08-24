@@ -19,6 +19,7 @@ class CustomDropDownFormField<T> extends StatefulWidget {
       this.fontSize,
       this.fillColor,
       this.height,
+      this.prefix,
       this.isExpanded = false})
       : super(key: key);
 
@@ -28,6 +29,7 @@ class CustomDropDownFormField<T> extends StatefulWidget {
   final Color? fillColor;
   final bool isExpanded;
   final Color? borderColor;
+  final Widget? prefix;
 
   final String? Function(T?)? validator;
 
@@ -55,9 +57,9 @@ class _CustomDropDownFormFieldState<T>
           height: widget.height,
           child: DropdownButtonFormField<T?>(
             style: TextStyle(
-              color: AppColors.hintColor,
+              color: AppColors.black,
               fontSize: widget.fontSize ?? context.width(.04),
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w300,
             ),
             value: widget.value,
             icon: const Icon(Icons.keyboard_arrow_down),
@@ -79,16 +81,17 @@ class _CustomDropDownFormFieldState<T>
                   borderRadius: BorderRadius.circular(50),
                   borderSide:
                       const BorderSide(color: AppColors.white, width: .5)),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide:
-                      const BorderSide(color: AppColors.white, width: .5)),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide:
-                      const BorderSide(color: AppColors.white, width: 1.5)),
+              // enabledBorder: OutlineInputBorder(
+              //     borderRadius: BorderRadius.circular(50),
+              //     borderSide:
+              //         const BorderSide(color: AppColors.white, width: .5)),
+              // focusedBorder: OutlineInputBorder(
+              //     borderRadius: BorderRadius.circular(50),
+              //     borderSide:
+              //         const BorderSide(color: AppColors.white, width: 1.5)),
               isDense: true,
               labelText: null,
+              prefixIcon: widget.prefix,
               contentPadding: widget.padding ??
                   EdgeInsets.symmetric(
                     horizontal: context.width(.05),

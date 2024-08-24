@@ -8,9 +8,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/autocomplete_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/categories_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/package_info_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/auto_complete_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/find_couriers_provider.dart';
+import 'package:ojembaa_mobile/features/request_courier/providers/get_categories_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/package_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/providers/upload_asset_provider.dart';
 import 'package:ojembaa_mobile/features/request_courier/screens/select_courier.dart';
@@ -23,9 +25,11 @@ import 'package:ojembaa_mobile/utils/components/image_util.dart';
 import 'package:ojembaa_mobile/utils/components/number_formatter.dart';
 import 'package:ojembaa_mobile/utils/components/utility.dart';
 import 'package:ojembaa_mobile/utils/components/validators.dart';
+import 'package:ojembaa_mobile/utils/data_util/timer_util.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_appbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
+import 'package:ojembaa_mobile/utils/widgets/custom_dropdown.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 import 'package:ojembaa_mobile/utils/widgets/snackbar.dart';
 import 'package:ojembaa_mobile/utils/widgets/white_pill.dart';
@@ -58,12 +62,15 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
 
   String? imageUrl;
 
+  CategoriesModel? category;
+
   bool? checkedValue = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _recipientKey = GlobalKey<FormState>();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final searchDebouncer = Debouncer(milliseconds: 1100);
 
   AutocompleteModel? pickUpLandmark;
   AutocompleteModel? dropOffLandmark;
@@ -98,18 +105,18 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                       ),
                       SizedBox(height: context.height(.015)),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          DeliveryWhitepill(
-                            title: "Light\nDelivery",
-                            selected: deliveryType == DeliveryType.light,
-                            onTap: () {
-                              setState(() {
-                                deliveryType = DeliveryType.light;
-                              });
-                            },
-                            icon: ImageUtil.bike,
-                          ),
+                          // DeliveryWhitepill(
+                          //   title: "Light\nDelivery",
+                          //   selected: deliveryType == DeliveryType.light,
+                          //   onTap: () {
+                          //     setState(() {
+                          //       deliveryType = DeliveryType.light;
+                          //     });
+                          //   },
+                          //   icon: ImageUtil.bike,
+                          // ),
                           DeliveryWhitepill(
                             title: "Medium\nDelivery",
                             selected: deliveryType == DeliveryType.medium,
@@ -120,6 +127,7 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                             },
                             icon: ImageUtil.car,
                           ),
+                          const SizedBox(width: 30),
                           DeliveryWhitepill(
                             title: "Heavy\nDelivery",
                             selected: deliveryType == DeliveryType.heavy,
@@ -224,11 +232,15 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               controller: pickUpLandmarkController,
                               borderColor: AppColors.white,
                               onChange: (value) {
-                                if (value.length > 1) {
-                                  reader.autoCompleteQuery(query: value);
-                                } else if (value.isEmpty) {
-                                  reader.reset();
-                                }
+                                searchDebouncer.run(
+                                  () {
+                                    if (value.length > 1) {
+                                      reader.autoCompleteQuery(query: value);
+                                    } else if (value.isEmpty) {
+                                      reader.reset();
+                                    }
+                                  },
+                                );
                               },
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),
@@ -349,11 +361,15 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                               controller: dropOffLandmarkController,
                               borderColor: AppColors.white,
                               onChange: (value) {
-                                if (value.length > 1) {
-                                  reader.autoCompleteQuery(query: value);
-                                } else if (value.isEmpty) {
-                                  reader.reset();
-                                }
+                                searchDebouncer.run(
+                                  () {
+                                    if (value.length > 1) {
+                                      reader.autoCompleteQuery(query: value);
+                                    } else if (value.isEmpty) {
+                                      reader.reset();
+                                    }
+                                  },
+                                );
                               },
                               hintText: "Landmark",
                               validator: Validators.notEmpty(),
@@ -448,6 +464,47 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                             ),
                           ),
                         ),
+                      ),
+                      SizedBox(height: context.height(.01)),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final data = ref.watch(getCategoriesProvider).data;
+                          if (data != null && data.isNotEmpty) {
+                            return CustomDropDownFormField<CategoriesModel>(
+                                items: data
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e.name ?? "",
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                hintText: "Category of item(s)",
+                                prefix: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: context.width(.015)),
+                                  child: Circle(
+                                    width: context.width(.0),
+                                    color: AppColors.primary.withOpacity(.38),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: SvgPicture.asset(
+                                        ImageUtil.pickup,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                value: category,
+                                onChanged: (CategoriesModel? val) {
+                                  setState(() {
+                                    category = val;
+                                  });
+                                });
+                          }
+                          return const SizedBox.shrink();
+                        },
                       ),
                       SizedBox(height: context.height(.015)),
                       Consumer(builder: (context, ref, child) {
@@ -731,6 +788,12 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                             message: "Please select a delivery type");
                         return;
                       }
+
+                      if (category == null) {
+                        CustomSnackbar.showErrorSnackBar(context,
+                            message: "Please select a category of item");
+                        return;
+                      }
                       if (pickUpLandmark == null || dropOffLandmark == null) {
                         CustomSnackbar.showErrorSnackBar(context,
                             message: "Please select a verifiable landmark");
@@ -788,6 +851,7 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                             "worth": packageInfo.worth,
                             "fragile": packageInfo.fragile,
                             "weight": packageInfo.weight!.toUpperCase(),
+                            "categoryId": category?.id
                           },
                           onSuccess: (String packageID) {
                             reader.createDelivery(

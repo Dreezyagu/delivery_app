@@ -43,6 +43,12 @@ class SignInProvider extends StateNotifier<BaseNotifier<UserModel>> {
       }
     }
   }
+
+  Future<bool> updateUserModel(UserModel user) async {
+    state = BaseNotifier.setLoading();
+    state = BaseNotifier.setDone<UserModel>(user);
+    return true;
+  }
 }
 
 final signInProvider =

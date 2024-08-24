@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/autocomplete_model.dart';
+import 'package:ojembaa_mobile/features/request_courier/models/categories_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/couriers_model.dart';
 import 'package:ojembaa_mobile/features/request_courier/models/pricing_model.dart';
 import 'package:ojembaa_mobile/utils/components/urls.dart';
@@ -252,6 +253,33 @@ class RequestServices {
 
       if (response.data["status"] == "success") {
         final data = PricingModel.fromMap(response.data["data"]);
+        return (success: data, error: null);
+      } else {
+        final error = ErrorModel.fromMap(response.data);
+        return (success: null, error: error.message ?? "An error occured");
+      }
+    } on DioException catch (e) {
+      ErrorModel? error;
+      if (e.response != null) {
+        error = ErrorModel.fromMap(e.response?.data);
+      }
+      return (success: null, error: error?.message ?? "An error occured");
+    } catch (e) {
+      return (success: null, error: "An error occured");
+    }
+  }
+
+  static Future<({List<CategoriesModel>? success, String? error})>
+      fetchCategories() async {
+    try {
+      final response = await dio.get("${baseUrl}categories");
+
+      if (response.data["status"] == "success") {
+        final data = (response.data["data"] as List)
+            .map(
+              (e) => CategoriesModel.fromMap(e),
+            )
+            .toList();
         return (success: data, error: null);
       } else {
         final error = ErrorModel.fromMap(response.data);

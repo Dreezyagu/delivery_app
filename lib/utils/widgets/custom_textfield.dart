@@ -119,7 +119,8 @@ class CustomTextFormField extends StatelessWidget {
             maxLines: expands ? null : maxLines,
             maxLength: maxLength,
             autofillHints: autofillHints,
-            style: style,
+            style: style ??
+                const TextStyle(color: AppColors.black, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: const TextStyle(

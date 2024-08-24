@@ -271,9 +271,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                               },
                               name:
                                   "${firstNameController.text.trim()} ${lastNameController.text.trim()}",
-                              phone: phoneController.text,
-                              email: emailController.text,
-                              password: confirmPassController.text);
+                              phone: phoneController.text.trim(),
+                              email: emailController.text.trim(),
+                              password: confirmPassController.text.trim());
                         }
                       },
                       isActive: !data.isLoading,

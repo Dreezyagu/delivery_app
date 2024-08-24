@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:ojembaa_mobile/features/authentication/models/user_model.dart';
 import 'package:ojembaa_mobile/utils/components/urls.dart';
 import 'package:ojembaa_mobile/utils/data_util/error_model.dart';
 import 'package:ojembaa_mobile/utils/helpers/http/http_helper.dart';
+import 'package:ojembaa_mobile/utils/helpers/storage/storage_helper.dart';
+import 'package:ojembaa_mobile/utils/helpers/storage/storage_keys.dart';
 
 class AuthServices {
   static final baseUrl = OjembaaUrls.getUrl("baseUrl");
@@ -81,6 +85,9 @@ class AuthServices {
       );
 
       if (response.data["status"] == "success") {
+        StorageHelper.setString(
+            StorageKeys.userModelKey, jsonEncode(response.data["data"]));
+
         final data = UserModel.fromMap(response.data["data"]);
         return (success: data, error: null);
       } else {

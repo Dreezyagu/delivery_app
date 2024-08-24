@@ -10,9 +10,12 @@ import 'package:ojembaa_mobile/features/authentication/screens/signup_page.dart'
 import 'package:ojembaa_mobile/features/homepage/providers/get_location_provider.dart';
 import 'package:ojembaa_mobile/features/homepage/screens/nav_page.dart';
 import 'package:ojembaa_mobile/features/orders/providers/get_orders_provider.dart';
+import 'package:ojembaa_mobile/features/request_courier/providers/get_categories_provider.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/helpers/storage/storage_helper.dart';
+import 'package:ojembaa_mobile/utils/helpers/storage/storage_keys.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
 import 'package:ojembaa_mobile/utils/widgets/snackbar.dart';
@@ -28,6 +31,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool obscure = true;
+
+  bool? rememberMe = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -102,27 +107,49 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 )),
                           ),
                         ),
-                        SizedBox(height: context.height(.025)),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ForgotPassword(),
-                                ));
-                          },
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Forgot your password?",
+                        SizedBox(height: context.height(.01)),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: rememberMe,
+                              onChanged: (value) {
+                                setState(() {
+                                  rememberMe = value;
+                                });
+                              },
+                            ),
+                            Text(
+                              "Remember me",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: context.width(.04),
                                   fontWeight: FontWeight.w400),
                             ),
-                          ),
+                            const Spacer(),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ForgotPassword(),
+                                    ));
+                              },
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Forgot password?",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: AppColors.red,
+                                      fontSize: context.width(.04),
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: context.height(.01)),
+                        SizedBox(height: context.height(.025)),
                         Consumer(
                           builder: (context, ref, child) {
                             final watcher = ref.watch(signInProvider);
@@ -130,6 +157,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             return CustomContinueButton(
                               onPressed: () {
                                 FocusScope.of(context).unfocus();
+                                StorageHelper.setBoolean(
+                                    StorageKeys.rememberMeKey, rememberMe);
                                 if (_formKey.currentState?.validate() == true) {
                                   reader.signIn(
                                       onError: (p0) =>
@@ -140,6 +169,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         ref
                                             .read(getOrdersProvider.notifier)
                                             .getOrders();
+                                        ref
+                                            .read(
+                                                getCategoriesProvider.notifier)
+                                            .fetchCategories();
 
                                         Navigator.push(
                                             context,
@@ -163,8 +196,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                               .getCurrentLocation();
                                         }
                                       },
-                                      email: emailController.text,
-                                      password: passwordController.text);
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text.trim());
                                 }
                               },
                               isActive: !watcher.isLoading,

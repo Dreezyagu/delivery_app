@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ojembaa_mobile/features/authentication/providers/signin_provider.dart';
+import 'package:ojembaa_mobile/features/authentication/screens/login_page.dart';
 import 'package:ojembaa_mobile/features/profile/widgets/profile_items_widget.dart';
 import 'package:ojembaa_mobile/utils/components/colors.dart';
 import 'package:ojembaa_mobile/utils/components/extensions.dart';
 import 'package:ojembaa_mobile/utils/components/image_util.dart';
+import 'package:ojembaa_mobile/utils/helpers/storage/storage_helper.dart';
 import 'package:ojembaa_mobile/utils/widgets/circle.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_button.dart';
 import 'package:ojembaa_mobile/utils/widgets/custom_textfield.dart';
@@ -106,8 +108,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             )),
                         TextButton(
                             onPressed: () {
-                              Navigator.popUntil(
-                                  context, ModalRoute.withName("/loginPage"));
+                              StorageHelper.clearPreferences();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    settings:
+                                        const RouteSettings(name: "/loginPage"),
+                                    builder: (context) => const LoginPage(),
+                                  ));
                             },
                             child: Text(
                               "Yes",
@@ -182,19 +190,27 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                         ),
                                         const SizedBox(height: 60),
                                         CustomContinueButton(
-                                          onPressed: () {
+                                          onPressed: () async {
                                             if (passwordController
                                                 .text.isNotEmpty) {
                                               setState(() {
                                                 isLoading = true;
                                               });
+                                              await StorageHelper
+                                                  .clearPreferences();
                                               Future.delayed(
                                                 const Duration(seconds: 90),
                                                 () {
-                                                  Navigator.popUntil(
+                                                  Navigator.pushReplacement(
                                                       context,
-                                                      ModalRoute.withName(
-                                                          "/loginPage"));
+                                                      MaterialPageRoute(
+                                                        settings:
+                                                            const RouteSettings(
+                                                                name:
+                                                                    "/loginPage"),
+                                                        builder: (context) =>
+                                                            const LoginPage(),
+                                                      ));
                                                 },
                                               );
                                             }
