@@ -105,18 +105,18 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                       ),
                       SizedBox(height: context.height(.015)),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // DeliveryWhitepill(
-                          //   title: "Light\nDelivery",
-                          //   selected: deliveryType == DeliveryType.light,
-                          //   onTap: () {
-                          //     setState(() {
-                          //       deliveryType = DeliveryType.light;
-                          //     });
-                          //   },
-                          //   icon: ImageUtil.bike,
-                          // ),
+                          DeliveryWhitepill(
+                            title: "Light\nDelivery",
+                            selected: deliveryType == DeliveryType.light,
+                            onTap: () {
+                              setState(() {
+                                deliveryType = DeliveryType.light;
+                              });
+                            },
+                            icon: ImageUtil.bike,
+                          ),
                           DeliveryWhitepill(
                             title: "Medium\nDelivery",
                             selected: deliveryType == DeliveryType.medium,
@@ -127,7 +127,6 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                             },
                             icon: ImageUtil.car,
                           ),
-                          const SizedBox(width: 30),
                           DeliveryWhitepill(
                             title: "Heavy\nDelivery",
                             selected: deliveryType == DeliveryType.heavy,
@@ -656,26 +655,6 @@ class _DeliverPackageState extends ConsumerState<DeliverPackage> {
                         hintText:
                             "Specific Instruction to the courier (Optional)",
                       ),
-                      SizedBox(height: context.width(.02)),
-                      Row(children: [
-                        Checkbox(
-                            value: checkedValue,
-                            checkColor: AppColors.white,
-                            activeColor: AppColors.primary,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                checkedValue = value;
-                              });
-                            }),
-                        Text(
-                          "Fragile Item ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.accent,
-                            fontSize: context.width(.035),
-                          ),
-                        ),
-                      ])
                     ],
                   ),
                 ),
