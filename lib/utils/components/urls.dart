@@ -1,11 +1,13 @@
+import 'package:ojembaa_mobile/utils/constants.dart';
+
 const Map<String, String> URL_TEST = {
   "baseUrl": "https://api.ojembaa.com/api/v1/",
-  "placesAPIKey": "AIzaSyAvTJld1XlBHTulNSsEcwzU1DsoWpOSDWI",
+  "placesAPIKey": placesAPI,
 };
 
 const Map<String, String> URL_PROD = {
   "baseUrl": "https://api.ojembaa.com/api/v1/",
-  "placesAPIKey": "AIzaSyAvTJld1XlBHTulNSsEcwzU1DsoWpOSDWI",
+  "placesAPIKey": placesAPI,
 };
 
 class OjembaaUrls {
